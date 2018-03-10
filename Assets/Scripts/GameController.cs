@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
+
+
 public class GameController : MonoBehaviour
 {
     public static GameController instance;
@@ -12,6 +15,10 @@ public class GameController : MonoBehaviour
     private AudioSource background;
 
     private float volume, timer, timer2;
+
+    public Maze mazePrefab;
+
+    private Maze mazeInstance;
 
     private void Awake()
     {
@@ -43,6 +50,16 @@ public class GameController : MonoBehaviour
             default:
                 break;
         }
+
+        BeginGame();
+    }
+
+    private void BeginGame()
+    {
+        Debug.Log("Beginning Game");
+        mazeInstance = Instantiate(mazePrefab) as Maze;
+        StartCoroutine(mazeInstance.Generate());
+
     }
 
     void Update()
@@ -133,6 +150,9 @@ public class GameController : MonoBehaviour
 
     public void PlayerDead()
     {
+        StopAllCoroutines();
+        Destroy(mazeInstance.gameObject);
+
         MuteBG();
         spawn = false;
         gameOver = true;
