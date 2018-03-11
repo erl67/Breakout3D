@@ -6,6 +6,8 @@ https://github.com/jrowberg/i2cdevlib
 https://funnyvale.com/connecting-mpu6050-gyroscope-accelerometer-to-arduino/
 https://www.amazon.com/gp/product/B008BOPN40
 
+https://www.alanzucconi.com/2015/10/07/how-to-integrate-arduino-with-unity/
+
 Background:
 
 

@@ -65,9 +65,12 @@ int16_t gx, gy, gz;
 // for a human.
 //#define OUTPUT_BINARY_ACCELGYRO
 
-
 #define LED_PIN 13
 bool blinkState = false;
+
+//#include <SoftwareSerial.h> //extra for ping
+//#include <SerialCommand.h>
+//SerialCommand sCmd;
 
 void setup() {
     // join I2C bus (I2Cdev library doesn't do this automatically)
@@ -81,6 +84,9 @@ void setup() {
     // (38400 chosen because it works as well at 8MHz as it does at 16MHz, but
     // it's really up to you depending on your project)
     Serial.begin(38400);
+
+    //while (!Serial);  //extra for ping
+    //sCmd.addCommand("PING", pingHandler);
 
     // initialize device
     Serial.println("Initializing I2C devices...");
@@ -117,7 +123,25 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
 }
 
+/*
+void pingHandler (const char *command) {
+  Serial.println("PONG");
+}
+
+void echoHandler () {
+  char *arg;
+  arg = sCmd.next();
+  if (arg != NULL)
+    Serial.println(arg);
+  else
+    Serial.println("nothing to echo");
+}
+*/
+
 void loop() {
+    //if (Serial.available() > 0) //extra for ping
+    //sCmd.readSerial();
+    
     // read raw accel/gyro measurements from device
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
