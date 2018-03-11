@@ -1,6 +1,7 @@
 # Breakout 3D
 
 Arduino Resources: 
+
 http://playground.arduino.cc/Main/MPU-6050
 https://github.com/jrowberg/i2cdevlib
 https://funnyvale.com/connecting-mpu6050-gyroscope-accelerometer-to-arduino/
