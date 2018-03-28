@@ -14,33 +14,34 @@ public class ArduinoController : MonoBehaviour
     public static List<string> portList;
     public float smooth = 2.0F;
     private Vector3 prevPosition;
+
+    private bool useController = false;
+
     void Start()
     {
-        string port = null;
-
-        //Debug.Log(System.IO.Ports.SerialPort.GetPortNames().Length);
-        foreach (string p in System.IO.Ports.SerialPort.GetPortNames())
+        if (useController)
         {
-            Debug.Log("p: " + p);
-            port = p;
+            string port = null;
+
+            //Debug.Log(System.IO.Ports.SerialPort.GetPortNames().Length);
+            foreach (string p in System.IO.Ports.SerialPort.GetPortNames())
+            {
+                Debug.Log("p: " + p);
+                port = p;
+            }
+
+            //portList = GetPortNames();
+            //foreach (string port in portList)
+            //{
+            //    Debug.Log("port: " + port);
+            //}
+            //Debug.Log(portList);
+
+            sp = new SerialPort(port, 38400, Parity.None, 8, StopBits.One);
+            OpenConnection();
+            WriteToArduino("PING");
+            StartCoroutine(AsynchronousReadFromArduino((string s) => Debug.Log(s), () => Debug.LogError("Error!"), 10000f));
         }
-
-        //portList = GetPortNames();
-
-        //foreach (string port in portList)
-        //{
-        //    Debug.Log("port: " + port);
-        //}
-        //Debug.Log(portList);
-
-        sp = new SerialPort(port, 38400, Parity.None, 8, StopBits.One);
-
-        OpenConnection();
-
-
-        WriteToArduino("PING");
-
-        StartCoroutine (AsynchronousReadFromArduino((string s) => Debug.Log(s), () => Debug.LogError("Error!"), 10000f));
     }
 
     List<string> GetPortNames()
@@ -118,7 +119,10 @@ public class ArduinoController : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        sp.Close();
+        if (useController)
+        {
+            sp.Close();
+        }
     }
 
     void MoveObject(string[] arduinoData)
@@ -155,16 +159,12 @@ public class ArduinoController : MonoBehaviour
 			float newGyroZ = transform.rotation.z + gyroZ;
 			*/
 
-
-
+        
             // transform.rotation = new Vector3(newGyroX, newGyroY, newGyroZ);
             // Quaternion target = Quaternion.Euler(newGyroX, newGyroY, newGyroZ);
             // transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * smooth);
-
-
         }
     }
-
 
     public bool IsNumber(string s)
     {
@@ -173,7 +173,6 @@ public class ArduinoController : MonoBehaviour
         {
             value = value && char.IsDigit(c);
         }
-
         return value;
     }
 
@@ -202,9 +201,7 @@ public class ArduinoController : MonoBehaviour
         DateTime initialTime = DateTime.Now;
         DateTime nowTime;
         TimeSpan diff = default(TimeSpan);
-
         string dataString = null;
-
         do
         {
             try
@@ -233,5 +230,4 @@ public class ArduinoController : MonoBehaviour
             fail();
         yield return null;
     }
-
 }

@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - hardware
+  - text
+  - ball
+  - player
+  - block
+  - board
   layers:
   - Default
   - TransparentFX
