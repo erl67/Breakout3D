@@ -36,7 +36,7 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        transform.position = player.transform.position + offset;
+        //transform.position = player.transform.position + offset;
 
         //https://answers.unity.com/questions/218347/how-do-i-make-the-camera-zoom-in-and-out-with-the.html
         fov += Input.GetAxis("Mouse ScrollWheel") * sensitivity;

@@ -14,6 +14,8 @@ public class GameController : MonoBehaviour
     private float volume, timer, timer2;
     public Text txtCenter, txtHelp;
 
+    public static int score = 0, lives = 9;
+
 
     private void Awake()
     {
@@ -42,11 +44,11 @@ public class GameController : MonoBehaviour
         switch (SceneManager.GetActiveScene().buildIndex)
         {
             case 0:
-                timer = Time.time + 3;
+                timer = Time.time + 15;
                 break;
             case 1:
-                timer = Time.time + 2;
-                timer2 = Time.time + 3;
+                timer = Time.time + 15;
+                timer2 = Time.time + 30;
                 break;
             default:
                 break;
@@ -57,34 +59,7 @@ public class GameController : MonoBehaviour
 
     private void BeginGame()
     {
-        Debug.Log("Beginning Game");
-
-        //mazeInstance = Instantiate(mazePrefab) as Maze;
-        //mazeInstance.Generate();
-        //mazeInstance.name = "mazeInstance";
-
-
-        //dots = GameObject.FindGameObjectsWithTag("dot"); //reduce number of dots
-        //foreach (GameObject dot in dots)
-        //{
-        //    if (deletedot == true || (System.Math.Abs(dot.transform.position.x) < 2.5f && System.Math.Abs(dot.transform.position.z) < 2.5f))
-        //    {
-        //        Destroy(dot);
-        //    }
-        //    deletedot = deletedot == true ? false : true;
-        //}
-
-        //walls = GameObject.FindGameObjectsWithTag("mazewallObs");
-        //foreach (GameObject wall in walls)
-        //{
-        //    if ((System.Math.Abs(wall.transform.position.x) < 3f && System.Math.Abs(wall.transform.position.z) < 3f) ||
-        //        (System.Math.Abs(wall.transform.position.x) > 18.0f && System.Math.Abs(wall.transform.position.z) > 18.0f))
-        //    {
-        //        Destroy(wall);
-        //    }
-        //}
-
-        //mazeInstance.ToggleMaze();
+        //Debug.Log("Beginning Game");
     }
 
     public IEnumerator StartBox()
@@ -96,8 +71,6 @@ public class GameController : MonoBehaviour
         txtHelp.text = "";
         txtCenter.text = "";
         Time.timeScale = 1;
-        //MakeGhosts();
-        //mazeInstance.ToggleMaze();
         GameObject.Find("Player").transform.position = new Vector3(0f, 0f, 0f);
     }
 
@@ -190,7 +163,6 @@ public class GameController : MonoBehaviour
     public void PlayerDead()
     {
         StopAllCoroutines();
-        //Destroy(mazeInstance.gameObject);
 
         MuteBG();
         spawn = false;
@@ -198,54 +170,3 @@ public class GameController : MonoBehaviour
     }
 
 }
-
-//public class GameController : MonoBehaviour {
-//    public bool spawnGhost = false, deletedot = false;
-
-//    public GameObject ghostPrefab;
-//    public int ghostCount;
-
-//    public GameObject[] dots, walls, ghosts;
-
-//    private AudioSource background, endSound;
-
-//    private float volume, timer;
-//    private float xOffset = 0f, zOffset = 0f;
-
-//    public Maze mazePrefab;
-//    private Maze mazeInstance;
-//    private MeshRenderer mr;
-
-//    public void MakeGhosts()
-//    {
-//        Debug.Log("Making ghosts");
-//        var ghost1 = (GameObject) Instantiate(ghostPrefab, new Vector3(18f, 0, 18f), transform.rotation);
-//        var ghost2 = (GameObject) Instantiate(ghostPrefab, new Vector3(18f, 0, -18f), transform.rotation);
-//        var ghost3 = (GameObject) Instantiate(ghostPrefab, new Vector3(-18f, 0, 18f), transform.rotation);
-//        var ghost4 = (GameObject) Instantiate(ghostPrefab, new Vector3(-18f, 0, -18f), transform.rotation);
-//    }
-
-
-
-//    void Update () {
-//        if (spawnGhost && Time.timeScale == 1)
-//        {
-//            ghostCount = GameObject.FindGameObjectsWithTag("ghost").Length;
-//            if (ghostCount < 10) {
-//                xOffset = Random.Range(-20f, 20f);
-//                zOffset = Random.Range(-20f, 20f);
-//                Vector3 spot = new Vector3(xOffset, 0, zOffset);
-
-//                Transform target = GameObject.Find("Pacman").gameObject.transform;
-//                transform.LookAt(target);
-
-//                float distance = Vector3.Distance(spot, target.position);
-
-//                if (distance > 9f)
-//                {
-//                    var ghostX = (GameObject) Instantiate(ghostPrefab, spot, transform.rotation);
-//                }
-//            }
-//            spawnGhost = false;
-//        }
-//    }

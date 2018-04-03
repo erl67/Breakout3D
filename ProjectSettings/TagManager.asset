@@ -10,6 +10,7 @@ TagManager:
   - player
   - block
   - board
+  - edge
   layers:
   - Default
   - TransparentFX
