@@ -763,7 +763,7 @@ GameObject:
   - component: {fileID: 444102423}
   m_Layer: 0
   m_Name: BoardField
-  m_TagString: Untagged
+  m_TagString: board
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -849,8 +849,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockPrefab: {fileID: 1513334899696894, guid: 190d6f8cb11d9f24da7d7721b412bdf2,
     type: 2}
-  xStart: 0
-  yStart: 0
 --- !u!1 &947752807
 GameObject:
   m_ObjectHideFlags: 0
@@ -983,7 +981,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4987446722164796, guid: 190d6f8cb11d9f24da7d7721b412bdf2, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 25
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 4987446722164796, guid: 190d6f8cb11d9f24da7d7721b412bdf2, type: 2}
       propertyPath: m_LocalPosition.z
@@ -1008,6 +1006,11 @@ Prefab:
     - target: {fileID: 4987446722164796, guid: 190d6f8cb11d9f24da7d7721b412bdf2, type: 2}
       propertyPath: m_RootOrder
       value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 136184707631596716, guid: 190d6f8cb11d9f24da7d7721b412bdf2,
+        type: 2}
+      propertyPath: m_Height
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 190d6f8cb11d9f24da7d7721b412bdf2, type: 2}
@@ -1134,7 +1137,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 50, z: 1}
-  m_Center: {x: -35, y: 0, z: 0}
+  m_Center: {x: -38, y: 0, z: 0}
 --- !u!4 &1464726726
 Transform:
   m_ObjectHideFlags: 0
@@ -1159,7 +1162,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 50, z: 1}
-  m_Center: {x: 35, y: 0, z: 0}
+  m_Center: {x: 38, y: 0, z: 0}
 --- !u!1 &1540246465
 GameObject:
   m_ObjectHideFlags: 0

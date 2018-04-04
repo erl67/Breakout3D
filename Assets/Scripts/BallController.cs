@@ -26,20 +26,23 @@ public class BallController : MonoBehaviour {
     }
 
     void Update () {
+        if (transform.position.z != 0f) transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
 		
 	}
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("BC " + other.tag + " " + other.transform.position + " @ " + gameObject.transform.position);
+        //Debug.Log("BC " + other.tag + " " + other.transform.position + " @ " + gameObject.transform.position);
 
         if (other.tag.Equals("block"))
         {
-            //Debug.Log("block died : " + gameObject.transform.position);
+            int points = (int) other.GetComponent<Rigidbody>().mass;
+            Debug.Log("block died : " + gameObject.transform.position + " " + points);
             //blockHit.Play();
+            //int points = (int) other.GetComponent<Rigidbody>().mass;
+            GameController.score += points;
 
             Destroy(other.gameObject);
-            GameController.score++;
             txtScore.text = "Score: " + GameController.score;
         }
 
@@ -47,6 +50,8 @@ public class BallController : MonoBehaviour {
         {
             force = new Vector3(0f, 10f, 0f) * 3f;
             rb.AddForce(force, ForceMode.Impulse);
+
+            Vector3 oppositeForce = player.GetComponent<Rigidbody>().velocity;
 
             GameController.score++;
             txtScore.text = "Score: " + GameController.score;
@@ -62,8 +67,6 @@ public class BallController : MonoBehaviour {
     private void OnBecameInvisible()
     {
         GameController.lives--;
-        txtLives.text = "Lives: " + GameController.lives;
-
         Destroy(gameObject);
     }
 }
