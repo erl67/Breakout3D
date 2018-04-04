@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour
         overhead.enabled = false;
 
         offset = transform.position - player.transform.position;
-        Debug.Log(transform.position + " " + player.transform.position);
+        Debug.Log("Camera: " + transform.position + "  Player: " + player.transform.position);
 
         fov = Camera.main.fieldOfView;
         camStartP = Camera.main.transform.position;

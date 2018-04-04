@@ -15,7 +15,7 @@ public class ArduinoController : MonoBehaviour
     public float smooth = 2.0F;
     private Vector3 prevPosition;
 
-    private bool useController = false;
+    private bool useController = true;
 
     void Start()
     {
