@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour {
     private int life;
     private float timer = 1f;
     private float moveH, moveV, moveSpeed;
+    private float playerScale;
 
     public AudioSource[] sounds;
     public AudioSource bounce, loseLife, endSound;
@@ -23,9 +24,11 @@ public class PlayerController : MonoBehaviour {
         {
             case 0:
                 moveSpeed = 100f;
+                playerScale = 5f;
                 break;
             case 1:
                 moveSpeed = 200f;
+                playerScale = 3f;
                 break;
             case 2:
                 break;
@@ -34,6 +37,8 @@ public class PlayerController : MonoBehaviour {
         }
         rb = gameObject.GetComponent<Rigidbody>();
         player = GameObject.Find("Player").gameObject;
+        player.transform.localScale = new Vector3(playerScale, 1f, 1f);
+
         life = GameController.lives;
 
         txtLives.text = "Lives: " + life;

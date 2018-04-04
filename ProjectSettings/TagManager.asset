@@ -11,6 +11,8 @@ TagManager:
   - block
   - board
   - edge
+  - top
+  - bottom
   layers:
   - Default
   - TransparentFX
