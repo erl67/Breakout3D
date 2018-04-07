@@ -11,6 +11,7 @@ public class BallController : MonoBehaviour {
 
     public AudioSource[] sounds;
     public AudioSource blockHit;
+	public AudioSource blockDied;
 
     public Text txtScore, txtLives;
 
@@ -42,6 +43,7 @@ public class BallController : MonoBehaviour {
             //int points = (int) other.GetComponent<Rigidbody>().mass;
             GameController.score += points;
 
+			blockDied.Play ();
             Destroy(other.gameObject);
             txtScore.text = "Score: " + GameController.score;
         }

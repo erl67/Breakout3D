@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour {
 
         if (life != GameController.lives)
         {
-            txtLives.text = "LIves: " + GameController.lives;
+            txtLives.text = "Lives: " + GameController.lives;
             life = GameController.lives;
             LoseLife();
         }
@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour {
         //lives--;
         //txtLives.text = "Lives: " + lives;
 
-        int lives = GameController.lives;
+        int lives = GameController.lives;// Shall we make this variable a global variable? --Yanbo
 
         //if (lives < 1) { endSound.Play(); }
         //else { loseLife.Play(); }
@@ -149,6 +149,7 @@ public class PlayerController : MonoBehaviour {
             txtCenter.text = "\nYou dropped the ball.\nPress (r or space) to continue";
             NewLife();
         }
+		endSound.Play ();// It is supposed to play the end sound, however it doesn't, I need to figure it out -- Yanbo
     }
 
     public void NewLife()
