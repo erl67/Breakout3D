@@ -16,7 +16,6 @@ public class GameController : MonoBehaviour
 
     public static int score = 0, lives = 9;
 
-
     private void Awake()
     {
         if (instance == null)
@@ -153,7 +152,6 @@ public class GameController : MonoBehaviour
         }
 
     }
-
 
     public void MuteBG()
     {

@@ -54,7 +54,7 @@ public class BoardMaker : MonoBehaviour {
                     block.transform.localScale = new Vector3(scaleMod, scaleMod, 1f);
                     block.GetComponent<Rigidbody>().mass = System.Math.Abs(rows + y); //points
 
-                    var br = block.GetComponent<Renderer>();
+                    var mr = block.GetComponent<Renderer>();
 
                     var g = colorMod - (float)y / (float)rows;
                     var r = colorMod - (float)x / (float)cols;
@@ -63,9 +63,9 @@ public class BoardMaker : MonoBehaviour {
                     r = Mathf.Abs(r);
 
                     blockColor = new Color(r, g, 0f);
-                    br.material.color = blockColor;
+                    mr.material.color = blockColor;
 
-                    //br.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+                    //mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
                 }
 
             }

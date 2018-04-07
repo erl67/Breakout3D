@@ -23,24 +23,24 @@ public class ArduinoController : MonoBehaviour
         {
             string port = null;
 
-            //Debug.Log(System.IO.Ports.SerialPort.GetPortNames().Length);
-            foreach (string p in System.IO.Ports.SerialPort.GetPortNames())
+            var pLength = SerialPort.GetPortNames();
+            if (pLength.Length == 0) useController = false;
+
+            if (useController)
             {
-                Debug.Log("p: " + p);
-                port = p;
+
+                foreach (string p in pLength)
+                {
+                    Debug.Log("p: " + p);
+                    port = p;
+                }
+
+                sp = new SerialPort(port, 38400, Parity.None, 8, StopBits.One);
+                OpenConnection();
+                WriteToArduino("PING");
+                StartCoroutine(AsynchronousReadFromArduino((string s) => Debug.Log(s), () => Debug.LogError("Error!"), 10000f));
+
             }
-
-            //portList = GetPortNames();
-            //foreach (string port in portList)
-            //{
-            //    Debug.Log("port: " + port);
-            //}
-            //Debug.Log(portList);
-
-            sp = new SerialPort(port, 38400, Parity.None, 8, StopBits.One);
-            OpenConnection();
-            WriteToArduino("PING");
-            StartCoroutine(AsynchronousReadFromArduino((string s) => Debug.Log(s), () => Debug.LogError("Error!"), 10000f));
         }
     }
 
