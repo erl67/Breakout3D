@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour {
     private float playerScale;
 
     public AudioSource[] sounds;
-    public AudioSource bounce, loseLife, endSound;
+    public AudioSource loseLife, endSound;
 
     public Text txtScore, txtLives, txtCenter;
 
@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour {
         txtScore.text = "Score: " + GameController.score;
 
         sounds = GetComponents<AudioSource>();
-        bounce = loseLife = endSound = null;
+        //bounce = loseLife = endSound = null;
 
         //bounce = sounds[0];
         //loseLife = sounds[1];
@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour {
 
         if (life != GameController.lives)
         {
-            txtLives.text = "LIves: " + GameController.lives;
+            txtLives.text = "Lives: " + GameController.lives;
             life = GameController.lives;
             LoseLife();
         }
@@ -136,10 +136,10 @@ public class PlayerController : MonoBehaviour {
         //lives--;
         //txtLives.text = "Lives: " + lives;
 
-        int lives = GameController.lives;
+        int lives = GameController.lives;// Shall we make this variable a global variable? --Yanbo
 
-        //if (lives < 1) { endSound.Play(); }
-        //else { loseLife.Play(); }
+        if (lives < 1) { endSound.Play(); }
+        else { loseLife.Play(); }
 
         Time.timeScale = 0;
 
@@ -154,6 +154,7 @@ public class PlayerController : MonoBehaviour {
             txtCenter.text = "\nYou dropped the ball.\nPress (r or space) to continue";
             NewLife();
         }
+		//endSound.Play();// It is supposed to play the end sound, however it doesn't, I need to figure it out -- Yanbo
     }
 
     public void NewLife()
