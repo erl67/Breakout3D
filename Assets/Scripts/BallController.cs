@@ -12,6 +12,7 @@ public class BallController : MonoBehaviour {
     public AudioSource[] sounds;
     public AudioSource blockHit;
 	public AudioSource blockDied;
+	public AudioSource bounce;//I changed the bounce sound effect here, which will make the structure easier --Yanbo
 
     public Text txtScore, txtLives;
 
@@ -22,7 +23,7 @@ public class BallController : MonoBehaviour {
 
 
         sounds = GetComponents<AudioSource>();
-        blockHit = null;
+        //blockHit = null;
         //blockHit = sounds[0];
     }
 
@@ -39,17 +40,18 @@ public class BallController : MonoBehaviour {
         {
             int points = (int) other.GetComponent<Rigidbody>().mass;
             Debug.Log("block died : " + gameObject.transform.position + " " + points);
-            //blockHit.Play();
+            blockHit.Play();
             //int points = (int) other.GetComponent<Rigidbody>().mass;
             GameController.score += points;
 
-			blockDied.Play ();
+			//blockDied.Play ();
             Destroy(other.gameObject);
             txtScore.text = "Score: " + GameController.score;
         }
 
         if (other.tag.Equals("player"))
         {
+			bounce.Play ();
             force = new Vector3(0f, 10f, 0f) * 3f;
             rb.AddForce(force, ForceMode.Impulse);
 
