@@ -12,7 +12,6 @@ public class BallController : MonoBehaviour {
     private Renderer mr;
     public Text txtScore, txtLives;
 
-    public AudioSource[] sounds;
     public AudioSource blockHit;
 	public AudioSource blockDied;
 	public AudioSource bounce;//I changed the bounce sound effect here, which will make the structure easier --Yanbo
@@ -40,22 +39,15 @@ public class BallController : MonoBehaviour {
         }
         ball = this.gameObject;
         ball.transform.localScale = new Vector3(ballScale * Random.Range(.5f, 1f), ballScale * Random.Range(.5f, 1f), ballScale * Random.Range(.5f, 1f));
-        //ball.transform.localScale *= ballScale;
 
         rb = ball.GetComponent<Rigidbody>();
         mr = ball.GetComponent<Renderer>();
-
         player = GameObject.Find("Player").gameObject;
-
-        sounds = GetComponents<AudioSource>();
-        //blockHit = null;
-        //blockHit = sounds[0];
     }
 
     void Update () {
-        //if (transform.position.z != 0f) transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
+        // keep ball from bouncing out of game
         if (transform.position.z > Mathf.Abs(.5f)) transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -67,16 +59,10 @@ public class BallController : MonoBehaviour {
             int points = (int) other.GetComponent<Rigidbody>().mass;
             Debug.Log("block died : " + gameObject.transform.position + " " + points);
             blockHit.Play();
-            //int points = (int) other.GetComponent<Rigidbody>().mass;
-            //blockHit.Play();
-            //mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-            //mr.material.color = other.GetComponent<Renderer>().material.color * .5f;
-            //mr.material.color -= other.GetComponent<Renderer>().material.color;
+
             mr.material.color *= other.GetComponent<Renderer>().material.color;
 
-
             force = new Vector3(Random.Range(-1 * blockForce, blockForce), 0f, 0) * 2f;
-            //force = new Vector3(blockForce, 0f, 0) * 2f; //need to find and set magnitude from edge
 
             rb.AddForce(force, ForceMode.Acceleration);
 
@@ -86,7 +72,6 @@ public class BallController : MonoBehaviour {
             GameController.score += points;
             txtScore.text = "Score: " + GameController.score;
 
-			//blockDied.Play ();
             Destroy(other.gameObject);
         }
 
@@ -95,6 +80,7 @@ public class BallController : MonoBehaviour {
 			bounce.Play ();
             force = new Vector3(0f, 10f, 0f) * 3f;
             rb.AddForce(force, ForceMode.Impulse);
+
             oppositeForce = player.GetComponent<Rigidbody>().velocity;
             Debug.Log("player velocity: " + oppositeForce + "  ball velocity: " + rb.velocity);
 
