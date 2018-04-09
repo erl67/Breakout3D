@@ -1,0 +1,14 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Custom for Visual Studio
+*.cs     diff=csharp
+
+* linguist-vendored
+*.cs linguist-vendored=false
+
+#Arduino/* linguist-vendored
+#Assets/Audios/* linguist-vendored
+#Assets/Materials/* linguist-vendored
+#Assets/Prefabs/* linguist-vendored
+#Assets/Scenes/* linguist-vendored
