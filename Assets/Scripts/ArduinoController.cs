@@ -17,18 +17,46 @@ public class ArduinoController : MonoBehaviour
 
     private bool useController = true;
 
+    private Rigidbody player;
+    private Vector3 force, prevForce;
+    private int ax, ay, az;
+    private int axDiff, ayDiff, azDiff;
+    private int gx, gy, gz;
+
+    void MovementData(string s)
+    {
+        s = s.Replace("a/g:\t", "");
+        string[] arduinoData = s.Split('\t');
+        if (arduinoData.Length == 6)
+        {                  
+            ax = int.Parse(arduinoData[0]) / 100;
+            ay = int.Parse(arduinoData[1]) / 100;
+            az = int.Parse(arduinoData[2]) / 100;
+            gx = int.Parse(arduinoData[3]) / 100;
+            gy = int.Parse(arduinoData[4]) / 100;
+            gz = int.Parse(arduinoData[5]) / 100;
+        }
+
+        Debug.Log(player.velocity + "\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
+
+        force = new Vector3(gx, 0f, 0f);
+        player.AddForce(force, ForceMode.Acceleration);
+        prevForce = force;
+
+    }
+
     void Start()
     {
+        player = GameObject.Find("Player").gameObject.GetComponent<Rigidbody>();
+
         if (useController)
         {
             string port = null;
-
-            var pLength = SerialPort.GetPortNames();
+            var pLength = System.IO.Ports.SerialPort.GetPortNames();
             if (pLength.Length == 0) useController = false;
 
             if (useController)
             {
-
                 foreach (string p in pLength)
                 {
                     Debug.Log("p: " + p);
@@ -38,8 +66,9 @@ public class ArduinoController : MonoBehaviour
                 sp = new SerialPort(port, 38400, Parity.None, 8, StopBits.One);
                 OpenConnection();
                 WriteToArduino("PING");
-                StartCoroutine(AsynchronousReadFromArduino((string s) => Debug.Log(s), () => Debug.LogError("Error!"), 10000f));
 
+                //StartCoroutine(AsynchronousReadFromArduino((string s) => Debug.Log(s), () => Debug.LogError("Error!"), 10000f));
+                StartCoroutine(AsynchronousReadFromArduino((string s) => MovementData(s), () => Debug.LogError("Error!"), 10000f));
             }
         }
     }
@@ -94,7 +123,7 @@ public class ArduinoController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /*
     void Update()
     {
         if (sp != null)
@@ -116,28 +145,21 @@ public class ArduinoController : MonoBehaviour
             }
         }
     }
-
-    void OnApplicationQuit()
-    {
-        if (useController)
-        {
-            sp.Close();
-        }
-    }
+ 
 
     void MoveObject(string[] arduinoData)
     {
         if (arduinoData.Length == 9)
         {
 
-            /*
-			 * We need to calculate new position of the object based on acceleration.
+            
+			 We need to calculate new position of the object based on acceleration.
 			 * The data that comes in from the accelerometer is in meters per second per second (m/s^2)
 			 * The equation is: s = ut + (1/2)a t^2
 			 * where s is position, u is velocity at t=0, t is time and a is a constant acceleration.
 			 * For example, if a car starts off stationary, and accelerates for two seconds with an 
 			 * acceleration of 3m/s^2, it moves (1/2) * 3 * 2^2 = 6m
-			 */
+			 *
 
             float accX = float.Parse(arduinoData[0]) / 100; // Accelerometer X
             float accY = float.Parse(arduinoData[1]) / 100; // Accelerometer Y
@@ -149,7 +171,7 @@ public class ArduinoController : MonoBehaviour
             float newAccZ = transform.position.z + accZ;
             transform.position = new Vector3(newAccX, newAccY, newAccZ);
 
-            /*
+            
 			float gyroX = float.Parse (arduinoData [6]);
 			float gyroY = float.Parse (arduinoData [8]);
 			float gyroZ = float.Parse (arduinoData [9]);
@@ -157,7 +179,7 @@ public class ArduinoController : MonoBehaviour
 			float newGyroX = transform.rotation.x + gyroX;
 			float newGyroY = transform.rotation.y + gyroY;
 			float newGyroZ = transform.rotation.z + gyroZ;
-			*/
+			
 
         
             // transform.rotation = new Vector3(newGyroX, newGyroY, newGyroZ);
@@ -165,24 +187,14 @@ public class ArduinoController : MonoBehaviour
             // transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * smooth);
         }
     }
-
-    public bool IsNumber(string s)
-    {
-        bool value = true;
-        foreach (char c in s.ToCharArray())
-        {
-            value = value && char.IsDigit(c);
-        }
-        return value;
-    }
-
+ */
 
     public void WriteToArduino(string message)
     {
         sp.WriteLine(message);
         sp.BaseStream.Flush();
     }
-
+/*
     public string ReadFromArduino(int timeout = 0)
     {
         sp.ReadTimeout = timeout;
@@ -195,7 +207,7 @@ public class ArduinoController : MonoBehaviour
             return null;
         }
     }
-
+*/
     public IEnumerator AsynchronousReadFromArduino(Action<string> callback, Action fail = null, float timeout = float.PositiveInfinity)
     {
         DateTime initialTime = DateTime.Now;
@@ -230,4 +242,11 @@ public class ArduinoController : MonoBehaviour
             fail();
         yield return null;
     }
+
+
+    void OnApplicationQuit()
+    {
+        if (useController) sp.Close();       
+    }
+
 }
