@@ -47,10 +47,10 @@ public class BallController : MonoBehaviour {
         mr = ball.GetComponent<Renderer>();
         player = GameObject.Find("Player").gameObject;
 
-        //sounds = GetComponents<AudioSource>();
-        //blockHit = null;
-        //blockHit = sounds[0];
-		force = new Vector3(2f, 10f, 0f) * 5f;
+        txtScore = GameObject.Find("txtScore").GetComponent<Text>();
+        txtLives = GameObject.Find("txtLives").GetComponent<Text>();
+
+        force = new Vector3(2f, 10f, 0f) * 5f;
 		rb.AddForce(force, ForceMode.Impulse);
 
     }
