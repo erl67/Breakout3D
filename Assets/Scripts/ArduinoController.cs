@@ -26,22 +26,21 @@ public class ArduinoController : MonoBehaviour
     private int axDiff, ayDiff, azDiff;
     private int gx, gy, gz;
 
-    public int[] axA = {0,0,0,0,0};
-    public int[] ayA = {0,0,0,0,0};
-    public int[] gxA = { 0, 0, 0, 0, 0 };
-    public int[] gyA = { 0, 0, 0, 0, 0 };
+    public int[] axA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    public int[] ayA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    public int[] gxA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    public int[] gyA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     private int axStart = 0, ayStart = 0;
     private int gxStart = 0, gyStart = 0;
     private int moveX = 0, moveY = 0;
     private int turnX = 0, turnY = 0;
 
-
     private int counter = 0;
+    protected int countMax = 9;  //first 10 readings to calibrate, then every 3
 
     void MovementData(string s)
     {
-
         s = s.Replace("a/g:\t", "");
         string[] arduinoData = s.Split('\t');
 
@@ -49,30 +48,35 @@ public class ArduinoController : MonoBehaviour
         {                  
             ay = int.Parse(arduinoData[0]) / 100;   //swapped from the sketch
             ax = int.Parse(arduinoData[1]) / 100;   //see x/y marked on chip
-            //az = int.Parse(arduinoData[2]) / 100;
+            az = int.Parse(arduinoData[2]) / 100;
             gx = int.Parse(arduinoData[3]) / 100;
             gy = int.Parse(arduinoData[4]) / 100;
-            //gz = int.Parse(arduinoData[5]) / 100;
+            gz = int.Parse(arduinoData[5]) / 100;
+
+            axA[counter] = ax;
+            ayA[counter] = ay;
+            gxA[counter] = gx;
+            gyA[counter] = gy;
+
+            counter++;
         }
 
-        axA[counter] = ax;
-        ayA[counter] = ay;
-        gxA[counter] = gx;
-        gyA[counter] = gy;
-
-        counter++;
-
-        //xStart = ((xStart == 0) && (counter == 5)) ? (int)axA.Average() : xStart;
-
-        if ((axStart==0) && (ayStart==0) && (counter == 5)) //calibrate based on first 5 readings
+        if ((axStart==0) && (ayStart==0) && (counter == countMax)) //calibrate based on first 10 readings
         {
+            countMax = 3;
+            counter = 0;            
             axStart = (int)axA.Average();
             ayStart = (int)ayA.Average();
             gxStart = (int)gxA.Average();
             gyStart = (int)gyA.Average();
-            Debug.Log("\tstart aX: " + axStart + " aY: " + ayStart + "\t gX: " + gxStart + " gY: " + gyStart);            
+
+            Debug.Log("Calibration aX: " + axStart + " aY: " + ayStart + "\t gX: " + gxStart + " gY: " + gyStart);
+            Array.Resize<int>(ref axA, 3);
+            Array.Resize<int>(ref ayA, 3);
+            Array.Resize<int>(ref gxA, 3);
+            Array.Resize<int>(ref gyA, 3);
         }
-        else if (counter == 5)
+        else if (counter == countMax)
         {
             moveX = (int) axA.Average() - axStart;
             moveY = (int) ayA.Average() - ayStart;
@@ -82,42 +86,35 @@ public class ArduinoController : MonoBehaviour
 
         if (Mathf.Abs(moveX) > 20)   //move at certain threshold
         {
-            Debug.Log("\tmove  x:" + moveX + " y:" + moveY);
+            //Debug.Log("\tmove  x:" + moveX + " y:" + moveY);
         }
 
-        if (Mathf.Abs(turnX) > 20)   //move at certain threshold
+        if (Mathf.Abs(turnY) > 30)   //increase hit power
         {
-            Debug.Log("\tturn  x:" + turnX + " y:" + turnY);
+            //Debug.Log("\tturn  y:" + turnY);
         }
 
-        if (Mathf.Abs(turnY) > 20)   //increase hit power
-        {
-            Debug.Log("\tbump  y:" + turnY);
-        }
-
-        counter = counter >= 5 ? 0 : counter;
-
-        //Debug.Log(" c: " + counter + " axA: " + axA[counter] + " avg: " + axA.Average());
+        counter = counter >= countMax ? 0 : counter;
 
         //Debug.Log(player.velocity + "\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
 
         prevForce = player.velocity; //can't remember why I saved this yet, might be useful
 
         if (Mathf.Abs(moveX) > 30) {
-            force = new Vector3(moveX, 0f, 0f) *5f;
+            force = new Vector3(moveX, 0f, 0f);
             player.AddForce(force, ForceMode.Acceleration);
             Debug.Log("side force:\t"+force.ToString());
             moveX = 0;            
         }
 
-        if (Mathf.Abs(turnY) > 10)
+        if (Mathf.Abs(turnY) > 50)
         {
-            force = new Vector3(0f, turnY, 0f) * 5f;
+            force = new Vector3(0f, turnY, 0f);
             Debug.Log("up force:\t" + force.ToString());
 
             //this force needs to be transfered to the ball on collision
             //not sure how to do 'correctly', going to put it in mass and can grab it from there 
-            //of player to determine force of hit
+            //and read in the BallController collision
             player.mass = turnY * 10;
             //player.AddForce(force, ForceMode.Acceleration);
             turnY = 0;
@@ -138,7 +135,7 @@ public class ArduinoController : MonoBehaviour
             {
                 foreach (string p in pLength)
                 {
-                    Debug.Log("p: " + p);
+                    //Debug.Log("p: " + p);
                     port = p;
                 }
 
@@ -171,7 +168,6 @@ public class ArduinoController : MonoBehaviour
         return serialPorts;
     }
 
-    //Function connecting to Arduino
     public void OpenConnection()
     {
         if (sp != null)
@@ -185,7 +181,7 @@ public class ArduinoController : MonoBehaviour
             {
                 sp.Open();  // opens the connection
                 sp.ReadTimeout = 50;  // sets the timeout value before reporting error
-                Debug.Log("Port Opened!");
+                Debug.Log("Port Opened: " + sp.PortName);
             }
         }
         else
@@ -217,8 +213,6 @@ public class ArduinoController : MonoBehaviour
             {
                 dataString = null;
             }
-
-            //Debug.Log(dataString);
 
             if (dataString != null)
             {
