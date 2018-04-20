@@ -47,7 +47,7 @@ public class BallController : MonoBehaviour {
         mr = ball.GetComponent<Renderer>();
         player = GameObject.Find("Player").gameObject;
 
-        sounds = GetComponents<AudioSource>();
+        //sounds = GetComponents<AudioSource>();
         //blockHit = null;
         //blockHit = sounds[0];
 		force = new Vector3(2f, 10f, 0f) * 5f;
@@ -77,15 +77,9 @@ public class BallController : MonoBehaviour {
             //Debug.Log("block died : " + gameObject.transform.position + " " + points);
             blockHit.Play();
 
-            //int points = (int) other.GetComponent<Rigidbody>().mass;
-            //blockHit.Play();
-            //mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-            //mr.material.color = other.GetComponent<Renderer>().material.color * .5f;
-            //mr.material.color -= other.GetComponent<Renderer>().material.color;
             mr.material.color *= other.gameObject.GetComponent<Renderer>().material.color;
 
 
-            mr.material.color *= other.GetComponent<Renderer>().material.color;
 
             //force = new Vector3(Random.Range(-1 * blockForce, blockForce), 0f, 0) * 2f;
             //force = new Vector3(blockForce, 0f, 0) * 2f; //need to find and set magnitude from edge
