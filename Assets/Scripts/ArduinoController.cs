@@ -38,6 +38,7 @@ public class ArduinoController : MonoBehaviour
 
     private int counter = 0;
     protected int countMax = 9;  //first 10 readings to calibrate, then every 3
+    protected int readInterval = 0;
 
     void MovementData(string s)
     {
@@ -63,7 +64,7 @@ public class ArduinoController : MonoBehaviour
 
         if ((axStart==0) && (ayStart==0) && (counter == countMax)) //calibrate based on first 10 readings
         {
-            countMax = 3;
+            countMax = readInterval + 1;
             counter = 0;            
             axStart = (int)axA.Average();
             ayStart = (int)ayA.Average();
@@ -71,10 +72,10 @@ public class ArduinoController : MonoBehaviour
             gyStart = (int)gyA.Average();
 
             Debug.Log("Calibration aX: " + axStart + " aY: " + ayStart + "\t gX: " + gxStart + " gY: " + gyStart);
-            Array.Resize<int>(ref axA, 3);
-            Array.Resize<int>(ref ayA, 3);
-            Array.Resize<int>(ref gxA, 3);
-            Array.Resize<int>(ref gyA, 3);
+            Array.Resize<int>(ref axA, countMax);
+            Array.Resize<int>(ref ayA, countMax);
+            Array.Resize<int>(ref gxA, countMax);
+            Array.Resize<int>(ref gyA, countMax);
         }
         else if (counter == countMax)
         {
@@ -84,30 +85,34 @@ public class ArduinoController : MonoBehaviour
             turnY = (int) gyA.Average() - gyStart;
         }
 
-        if (Mathf.Abs(moveX) > 20)   //move at certain threshold
+        if (Mathf.Abs(moveX) > 10)   //move at certain threshold
         {
-            //Debug.Log("\tmove  x:" + moveX + " y:" + moveY);
+            Debug.Log("\tmove  x:" + moveX + " y:" + moveY);
         }
 
-        if (Mathf.Abs(turnY) > 30)   //increase hit power
+        if (Mathf.Abs(turnY) > 10)   //increase hit power
         {
-            //Debug.Log("\tturn  y:" + turnY);
+            Debug.Log("\tturn  y:" + turnY);
         }
 
         counter = counter >= countMax ? 0 : counter;
 
         //Debug.Log(player.velocity + "\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
+        //Debug.Log("\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
 
         prevForce = player.velocity; //can't remember why I saved this yet, might be useful
 
-        if (Mathf.Abs(moveX) > 30) {
-            force = new Vector3(moveX, 0f, 0f);
+        if (Mathf.Abs(moveX) > 10) {
+            
+            player.velocity = Vector3.zero;
+            force = new Vector3(moveX, 0f, 0f) * 20f;
+
             player.AddForce(force, ForceMode.Acceleration);
             Debug.Log("side force:\t"+force.ToString());
             moveX = 0;            
         }
 
-        if (Mathf.Abs(turnY) > 50)
+        if (Mathf.Abs(turnY) > 10)
         {
             force = new Vector3(0f, turnY, 0f);
             Debug.Log("up force:\t" + force.ToString());
