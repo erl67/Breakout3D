@@ -19,6 +19,8 @@ public class ArduinoController : MonoBehaviour
     private bool useController = true;
 
     private Rigidbody player;
+    private Rigidbody ball;
+
     private Vector3 force, prevForce;
     private int ax, ay, az;
     private int axDiff, ayDiff, azDiff;
@@ -26,9 +28,14 @@ public class ArduinoController : MonoBehaviour
 
     public int[] axA = {0,0,0,0,0};
     public int[] ayA = {0,0,0,0,0};
+    public int[] gxA = { 0, 0, 0, 0, 0 };
+    public int[] gyA = { 0, 0, 0, 0, 0 };
 
-    private int xStart = 0, yStart = 0;
+    private int axStart = 0, ayStart = 0;
+    private int gxStart = 0, gyStart = 0;
     private int moveX = 0, moveY = 0;
+    private int turnX = 0, turnY = 0;
+
 
     private int counter = 0;
 
@@ -42,34 +49,50 @@ public class ArduinoController : MonoBehaviour
         {                  
             ay = int.Parse(arduinoData[0]) / 100;   //swapped from the sketch
             ax = int.Parse(arduinoData[1]) / 100;   //see x/y marked on chip
-            az = int.Parse(arduinoData[2]) / 100;
-            //gy = int.Parse(arduinoData[3]) / 100;
-            //gx = int.Parse(arduinoData[4]) / 100;
+            //az = int.Parse(arduinoData[2]) / 100;
+            gx = int.Parse(arduinoData[3]) / 100;
+            gy = int.Parse(arduinoData[4]) / 100;
             //gz = int.Parse(arduinoData[5]) / 100;
         }
 
         axA[counter] = ax;
         ayA[counter] = ay;
+        gxA[counter] = gx;
+        gyA[counter] = gy;
 
         counter++;
 
         //xStart = ((xStart == 0) && (counter == 5)) ? (int)axA.Average() : xStart;
 
-        if ((xStart==0) && (yStart==0) && (counter == 5))
+        if ((axStart==0) && (ayStart==0) && (counter == 5)) //calibrate based on first 5 readings
         {
-            xStart = (int)axA.Average();
-            yStart = (int)ayA.Average();
-            Debug.Log("\tstartX: " + xStart + " startY: " + yStart);
+            axStart = (int)axA.Average();
+            ayStart = (int)ayA.Average();
+            gxStart = (int)gxA.Average();
+            gyStart = (int)gyA.Average();
+            Debug.Log("\tstart aX: " + axStart + " aY: " + ayStart + "\t gX: " + gxStart + " gY: " + gyStart);            
         }
         else if (counter == 5)
         {
-            moveX = (int) axA.Average() - xStart;
-            moveY = (int) ayA.Average() - yStart;
+            moveX = (int) axA.Average() - axStart;
+            moveY = (int) ayA.Average() - ayStart;
+            turnX = (int) gxA.Average() - gxStart;
+            turnY = (int) gyA.Average() - gyStart;
         }
 
-        if (Mathf.Abs(moveX) > 5)
+        if (Mathf.Abs(moveX) > 20)   //move at certain threshold
         {
-            Debug.Log("\tmove  tx:" + moveX + " y:" + moveY);
+            Debug.Log("\tmove  x:" + moveX + " y:" + moveY);
+        }
+
+        if (Mathf.Abs(turnX) > 20)   //move at certain threshold
+        {
+            Debug.Log("\tturn  x:" + turnX + " y:" + turnY);
+        }
+
+        if (Mathf.Abs(turnY) > 20)   //increase hit power
+        {
+            Debug.Log("\tbump  y:" + turnY);
         }
 
         counter = counter >= 5 ? 0 : counter;
@@ -78,13 +101,26 @@ public class ArduinoController : MonoBehaviour
 
         //Debug.Log(player.velocity + "\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
 
-        if (Mathf.Abs(moveX) > 10) {
+        prevForce = player.velocity; //can't remember why I saved this yet, might be useful
+
+        if (Mathf.Abs(moveX) > 30) {
             force = new Vector3(moveX, 0f, 0f) *5f;
             player.AddForce(force, ForceMode.Acceleration);
-            prevForce = force; //not sure why I saved this
-            Debug.Log("force:\t"+force.ToString());
-            moveX = 0;
-            moveY = 0;
+            Debug.Log("side force:\t"+force.ToString());
+            moveX = 0;            
+        }
+
+        if (Mathf.Abs(turnY) > 10)
+        {
+            force = new Vector3(0f, turnY, 0f) * 5f;
+            Debug.Log("up force:\t" + force.ToString());
+
+            //this force needs to be transfered to the ball on collision
+            //not sure how to do 'correctly', going to put it in mass and can grab it from there 
+            //of player to determine force of hit
+            player.mass = turnY * 10;
+            //player.AddForce(force, ForceMode.Acceleration);
+            turnY = 0;
         }
     }
 
@@ -165,84 +201,6 @@ public class ArduinoController : MonoBehaviour
         }
     }
 
-    /*
-    void Update()
-    {
-        if (sp != null)
-        {
-            try
-            {
-                //Read incoming data
-                strIn = sp.ReadLine();
-                if (!string.IsNullOrEmpty(strIn))
-                {
-                    // Split string into an array
-                    string[] arduinoData = strIn.Split(',');
-                    MoveObject(arduinoData);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Do nothing - just ignore	
-            }
-        }
-    }
- 
-    void MoveObject(string[] arduinoData)
-    {
-        if (arduinoData.Length == 9)
-        {
-			 We need to calculate new position of the object based on acceleration.
-			 * The data that comes in from the accelerometer is in meters per second per second (m/s^2)
-			 * The equation is: s = ut + (1/2)a t^2
-			 * where s is position, u is velocity at t=0, t is time and a is a constant acceleration.
-			 * For example, if a car starts off stationary, and accelerates for two seconds with an 
-			 * acceleration of 3m/s^2, it moves (1/2) * 3 * 2^2 = 6m
-			 *
-
-            float accX = float.Parse(arduinoData[0]) / 100; // Accelerometer X
-            float accY = float.Parse(arduinoData[1]) / 100; // Accelerometer Y
-            float accZ = float.Parse(arduinoData[2]) / 100; // Accelerometer Z
-
-            float newAccX = transform.position.x + accX;
-            float newAccY = transform.position.y + accY;
-            float newAccZ = transform.position.z + accZ;
-            transform.position = new Vector3(newAccX, newAccY, newAccZ);
-            
-			float gyroX = float.Parse (arduinoData [6]);
-			float gyroY = float.Parse (arduinoData [8]);
-			float gyroZ = float.Parse (arduinoData [9]);
-
-			float newGyroX = transform.rotation.x + gyroX;
-			float newGyroY = transform.rotation.y + gyroY;
-			float newGyroZ = transform.rotation.z + gyroZ;		
-        
-            // transform.rotation = new Vector3(newGyroX, newGyroY, newGyroZ);
-            // Quaternion target = Quaternion.Euler(newGyroX, newGyroY, newGyroZ);
-            // transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * smooth);
-        }
-    }
- 
-
-    public void WriteToArduino(string message)
-    {
-        sp.WriteLine(message);
-        sp.BaseStream.Flush();
-    }
-
-    public string ReadFromArduino(int timeout = 0)
-    {
-        sp.ReadTimeout = timeout;
-        try
-        {
-            return sp.ReadLine();
-        }
-        catch (TimeoutException e)
-        {
-            return null;
-        }
-    }
-*/
     public IEnumerator AsynchronousReadFromArduino(Action<string> callback, Action fail = null, float timeout = float.PositiveInfinity)
     {
         DateTime initialTime = DateTime.Now;
@@ -288,9 +246,52 @@ public class ArduinoController : MonoBehaviour
         yield return null;
     }
 
+    public void WriteToArduino(string message)
+    {
+        sp.WriteLine(message);
+        sp.BaseStream.Flush();
+    }
+
     void OnApplicationQuit()
     {
-        if (useController) sp.Close();       
+        if (useController) sp.Close();
     }
+
+    /*
+    void MoveObject(string[] arduinoData)
+    {
+        if (arduinoData.Length == 9)
+        {
+			 We need to calculate new position of the object based on acceleration.
+			 * The data that comes in from the accelerometer is in meters per second per second (m/s^2)
+			 * The equation is: s = ut + (1/2)a t^2
+			 * where s is position, u is velocity at t=0, t is time and a is a constant acceleration.
+			 * For example, if a car starts off stationary, and accelerates for two seconds with an 
+			 * acceleration of 3m/s^2, it moves (1/2) * 3 * 2^2 = 6m
+			 *
+
+            float accX = float.Parse(arduinoData[0]) / 100; // Accelerometer X
+            float accY = float.Parse(arduinoData[1]) / 100; // Accelerometer Y
+            float accZ = float.Parse(arduinoData[2]) / 100; // Accelerometer Z
+
+            float newAccX = transform.position.x + accX;
+            float newAccY = transform.position.y + accY;
+            float newAccZ = transform.position.z + accZ;
+            transform.position = new Vector3(newAccX, newAccY, newAccZ);
+            
+			float gyroX = float.Parse (arduinoData [6]);
+			float gyroY = float.Parse (arduinoData [8]);
+			float gyroZ = float.Parse (arduinoData [9]);
+
+			float newGyroX = transform.rotation.x + gyroX;
+			float newGyroY = transform.rotation.y + gyroY;
+			float newGyroZ = transform.rotation.z + gyroZ;		
+        
+            // transform.rotation = new Vector3(newGyroX, newGyroY, newGyroZ);
+            // Quaternion target = Quaternion.Euler(newGyroX, newGyroY, newGyroZ);
+            // transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * smooth);
+        }
+    }
+*/
 
 }
