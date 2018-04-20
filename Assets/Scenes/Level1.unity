@@ -1188,7 +1188,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 9332334f5c44347e19efb0855d0dc19f, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.333
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1362,8 +1362,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 50, z: 10}
-  m_Center: {x: -38, y: 0, z: 0}
+  m_Size: {x: 1, y: 100, z: 10}
+  m_Center: {x: -40, y: 0, z: 0}
 --- !u!4 &1464726726
 Transform:
   m_ObjectHideFlags: 0
@@ -1387,8 +1387,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 50, z: 10}
-  m_Center: {x: 38, y: 0, z: 0}
+  m_Size: {x: 1, y: 100, z: 10}
+  m_Center: {x: 40, y: 0, z: 0}
 --- !u!1 &1514010771
 GameObject:
   m_ObjectHideFlags: 0

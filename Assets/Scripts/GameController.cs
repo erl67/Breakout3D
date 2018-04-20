@@ -37,7 +37,6 @@ public class GameController : MonoBehaviour
         StartCoroutine(StartBox());
         Time.timeScale = 0;
         txtCenter.text = "Press any Key to Begin";
-        //background = GetComponents<AudioSource>()[0];
         BeginGame();
 
         switch (SceneManager.GetActiveScene().buildIndex)
@@ -58,7 +57,6 @@ public class GameController : MonoBehaviour
 
     private void BeginGame()
     {
-        //Debug.Log("Beginning Game");
     }
 
     public IEnumerator StartBox()

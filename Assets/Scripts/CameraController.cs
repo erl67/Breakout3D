@@ -36,6 +36,7 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
+        //uncomment for camera follow player
         //transform.position = player.transform.position + offset;
 
         //https://answers.unity.com/questions/218347/how-do-i-make-the-camera-zoom-in-and-out-with-the.html
