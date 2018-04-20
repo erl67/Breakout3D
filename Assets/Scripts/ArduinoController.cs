@@ -40,6 +40,10 @@ public class ArduinoController : MonoBehaviour
     protected int countMax = 9;  //first 10 readings to calibrate, then every 3
     protected int readInterval = 0;
 
+    public float moveSpeed = 30f;
+    public float bumpPower = 30f;
+
+
     void MovementData(string s)
     {
         s = s.Replace("a/g:\t", "");
@@ -104,10 +108,10 @@ public class ArduinoController : MonoBehaviour
 
         if (Mathf.Abs(moveX) > 10) {
             
-            player.velocity = Vector3.zero;
-            force = new Vector3(moveX, 0f, 0f) * 20f;
+            //player.velocity = Vector3.zero;
+            force = new Vector3(moveX, 0f, 0f) * moveScale;
 
-            player.AddForce(force, ForceMode.Acceleration);
+            player.AddForce(force, ForceMode.Impulse);
             Debug.Log("side force:\t"+force.ToString());
             moveX = 0;            
         }
@@ -120,7 +124,7 @@ public class ArduinoController : MonoBehaviour
             //this force needs to be transfered to the ball on collision
             //not sure how to do 'correctly', going to put it in mass and can grab it from there 
             //and read in the BallController collision
-            player.mass = turnY * 10;
+            player.mass = turnY * bump;
             //player.AddForce(force, ForceMode.Acceleration);
             turnY = 0;
         }
