@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using System;
+using System.Linq;
 
 public class ArduinoController : MonoBehaviour
 {
@@ -23,26 +24,68 @@ public class ArduinoController : MonoBehaviour
     private int axDiff, ayDiff, azDiff;
     private int gx, gy, gz;
 
+    public int[] axA = {0,0,0,0,0};
+    public int[] ayA = {0,0,0,0,0};
+
+    private int xStart = 0, yStart = 0;
+    private int moveX = 0, moveY = 0;
+
+    private int counter = 0;
+
     void MovementData(string s)
     {
+
         s = s.Replace("a/g:\t", "");
         string[] arduinoData = s.Split('\t');
+
         if (arduinoData.Length == 6)
         {                  
-            ax = int.Parse(arduinoData[0]) / 100;
-            ay = int.Parse(arduinoData[1]) / 100;
+            ay = int.Parse(arduinoData[0]) / 100;   //swapped from the sketch
+            ax = int.Parse(arduinoData[1]) / 100;   //see x/y marked on chip
             az = int.Parse(arduinoData[2]) / 100;
-            gx = int.Parse(arduinoData[3]) / 100;
-            gy = int.Parse(arduinoData[4]) / 100;
-            gz = int.Parse(arduinoData[5]) / 100;
+            //gy = int.Parse(arduinoData[3]) / 100;
+            //gx = int.Parse(arduinoData[4]) / 100;
+            //gz = int.Parse(arduinoData[5]) / 100;
         }
 
-        Debug.Log(player.velocity + "\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
+        axA[counter] = ax;
+        ayA[counter] = ay;
 
-        force = new Vector3(gx, 0f, 0f);
-        player.AddForce(force, ForceMode.Acceleration);
-        prevForce = force;
+        counter++;
 
+        //xStart = ((xStart == 0) && (counter == 5)) ? (int)axA.Average() : xStart;
+
+        if ((xStart==0) && (yStart==0) && (counter == 5))
+        {
+            xStart = (int)axA.Average();
+            yStart = (int)ayA.Average();
+            Debug.Log("\tstartX: " + xStart + " startY: " + yStart);
+        }
+        else if (counter == 5)
+        {
+            moveX = (int) axA.Average() - xStart;
+            moveY = (int) ayA.Average() - yStart;
+        }
+
+        if (Mathf.Abs(moveX) > 5)
+        {
+            Debug.Log("\tmove  tx:" + moveX + " y:" + moveY);
+        }
+
+        counter = counter >= 5 ? 0 : counter;
+
+        //Debug.Log(" c: " + counter + " axA: " + axA[counter] + " avg: " + axA.Average());
+
+        //Debug.Log(player.velocity + "\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
+
+        if (Mathf.Abs(moveX) > 10) {
+            force = new Vector3(moveX, 0f, 0f) *5f;
+            player.AddForce(force, ForceMode.Acceleration);
+            prevForce = force; //not sure why I saved this
+            Debug.Log("force:\t"+force.ToString());
+            moveX = 0;
+            moveY = 0;
+        }
     }
 
     void Start()
@@ -65,7 +108,7 @@ public class ArduinoController : MonoBehaviour
 
                 sp = new SerialPort(port, 38400, Parity.None, 8, StopBits.One);
                 OpenConnection();
-                WriteToArduino("PING");
+                //WriteToArduino("PING");
 
                 //StartCoroutine(AsynchronousReadFromArduino((string s) => Debug.Log(s), () => Debug.LogError("Error!"), 10000f));
                 StartCoroutine(AsynchronousReadFromArduino((string s) => MovementData(s), () => Debug.LogError("Error!"), 10000f));
@@ -89,7 +132,6 @@ public class ArduinoController : MonoBehaviour
             // if (dev.StartsWith ("/dev/cu.*"))
             serialPorts.Add(dev);
         }
-
         return serialPorts;
     }
 
@@ -146,13 +188,10 @@ public class ArduinoController : MonoBehaviour
         }
     }
  
-
     void MoveObject(string[] arduinoData)
     {
         if (arduinoData.Length == 9)
         {
-
-            
 			 We need to calculate new position of the object based on acceleration.
 			 * The data that comes in from the accelerometer is in meters per second per second (m/s^2)
 			 * The equation is: s = ut + (1/2)a t^2
@@ -165,12 +204,10 @@ public class ArduinoController : MonoBehaviour
             float accY = float.Parse(arduinoData[1]) / 100; // Accelerometer Y
             float accZ = float.Parse(arduinoData[2]) / 100; // Accelerometer Z
 
-
             float newAccX = transform.position.x + accX;
             float newAccY = transform.position.y + accY;
             float newAccZ = transform.position.z + accZ;
             transform.position = new Vector3(newAccX, newAccY, newAccZ);
-
             
 			float gyroX = float.Parse (arduinoData [6]);
 			float gyroY = float.Parse (arduinoData [8]);
@@ -178,23 +215,21 @@ public class ArduinoController : MonoBehaviour
 
 			float newGyroX = transform.rotation.x + gyroX;
 			float newGyroY = transform.rotation.y + gyroY;
-			float newGyroZ = transform.rotation.z + gyroZ;
-			
-
+			float newGyroZ = transform.rotation.z + gyroZ;		
         
             // transform.rotation = new Vector3(newGyroX, newGyroY, newGyroZ);
             // Quaternion target = Quaternion.Euler(newGyroX, newGyroY, newGyroZ);
             // transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * smooth);
         }
     }
- */
+ 
 
     public void WriteToArduino(string message)
     {
         sp.WriteLine(message);
         sp.BaseStream.Flush();
     }
-/*
+
     public string ReadFromArduino(int timeout = 0)
     {
         sp.ReadTimeout = timeout;
@@ -225,13 +260,23 @@ public class ArduinoController : MonoBehaviour
                 dataString = null;
             }
 
+            //Debug.Log(dataString);
+
             if (dataString != null)
             {
-                callback(dataString);
+                try
+                {
+                    callback(obj: dataString);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(e.ToString());
+                    dataString = null;
+                }
                 yield return null;
             }
             else
-                yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSeconds(0.1f);
 
             nowTime = DateTime.Now;
             diff = nowTime - initialTime;
@@ -242,7 +287,6 @@ public class ArduinoController : MonoBehaviour
             fail();
         yield return null;
     }
-
 
     void OnApplicationQuit()
     {
