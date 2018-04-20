@@ -4,16 +4,19 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour {
+	public class PlayerController : MonoBehaviour {
     public GameObject player;
+	public GameObject ballPrefab;
     private Rigidbody rb;
 
     private int life;
+	private int ballRemaining = 1;
     private float timer = 1f;
     private float moveH, moveV, moveSpeed;
     private float playerScale;
 
-    public AudioSource[] sounds;
+
+    //public AudioSource[] sounds;
     public AudioSource loseLife, endSound;
 
     public Text txtScore, txtLives, txtCenter;
@@ -23,8 +26,8 @@ public class PlayerController : MonoBehaviour {
         switch (SceneManager.GetActiveScene().buildIndex)
         {
             case 0:
-                moveSpeed = 100f;
-                playerScale = 5f;
+                moveSpeed = 1000f;
+                playerScale = 3f;
                 break;
             case 1:
                 moveSpeed = 200f;
@@ -44,7 +47,7 @@ public class PlayerController : MonoBehaviour {
         txtLives.text = "Lives: " + life;
         txtScore.text = "Score: " + GameController.score;
 
-        sounds = GetComponents<AudioSource>();
+        //sounds = GetComponents<AudioSource>();
         //bounce = loseLife = endSound = null;
 
         //bounce = sounds[0];
@@ -68,8 +71,14 @@ public class PlayerController : MonoBehaviour {
         player.transform.position = new Vector3(0f, 0f, 0f);
     }
 
-    void Update () {
-
+    void Update () 
+	{
+		if (Input.GetMouseButtonDown (0)&& ballRemaining!=0) 
+		{
+			var ball = Instantiate (ballPrefab) as GameObject;
+			ball.transform.position = (transform.position + new Vector3 (0f, 2f, 0f));
+			ballRemaining = 0;
+		}
         if (life != GameController.lives)
         {
             txtLives.text = "Lives: " + GameController.lives;
@@ -82,40 +91,57 @@ public class PlayerController : MonoBehaviour {
             GameController.lives--;
             LoseLife();
         }
+
+		if (transform.position.x > 30f) transform.position = new Vector3(30f, transform.position.y, 0f);
+		if (transform.position.x < -30f) transform.position = new Vector3(-30f, transform.position.y, 0f);
+		//!!This is for restrict the posistion of the player, because the panel will eventually move out of the playing area under extream circumanstance.
+		//If the scale of the panel changes, these two lines need to be fixed also.
     }
 
-    void FixedUpdate()
+    void FixedUpdate()//I nearly rewrite this function, although I disabled the F and H key -- they can no longer move the pad. But the mouse now works better.
     {
         float mouseH = Input.GetAxis("Mouse X");
         float mouseV = Input.GetAxis("Mouse Y");
+		float keyboardH = 0f;
 
         if (mouseH != 0f || mouseV != 0f)
         {
             Vector3 motion = new Vector3(mouseH * moveSpeed, 0f, 0f);
-            rb.AddForce(motion * 1000f);
+            rb.AddForce(motion * moveSpeed);
         }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            rb.velocity = Vector3.zero;
-            rb.AddForce(new Vector3(-100f, 0f, 0f) * 500f, ForceMode.Impulse);
+        	keyboardH = -1f;
         }
 
         if (Input.GetKeyDown(KeyCode.H))
         {
-            rb.velocity = Vector3.zero;
-            rb.AddForce(new Vector3(100f, 0f, 0f) * 500f, ForceMode.Impulse);
+			keyboardH = 1f;
         }
+
+		Vector3 keyboardMotion = new Vector3 (keyboardH, 0f, 0f);
+
+		//rb.velocity = Vector3.zero;
+		rb.AddForce (keyboardMotion * moveSpeed);
+
+
+		if (!Input.GetKey (KeyCode.F) || !Input.GetKey (KeyCode.H) ) 
+		{
+			rb.velocity = Vector3.zero;
+		}
+
     }
 
-    private void OnTriggerEnter(Collider other)
+	/*
+	private void OnCollisionEnter(Collision other)
     {
-        if (other.tag.Equals("edge"))
+		if (other.gameObject.tag.Equals("edge"))
         {
             rb.velocity = Vector3.zero;
         }
     }
-
+	/*
     private void OnTriggerStay(Collider other)
     {
         if (other.tag.Equals("edge"))
@@ -123,6 +149,7 @@ public class PlayerController : MonoBehaviour {
             rb.velocity = Vector3.zero;
         }
     }
+    */
 
     private void OnBecameInvisible()
     {
