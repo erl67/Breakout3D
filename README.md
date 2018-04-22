@@ -1,8 +1,8 @@
 # Breakout 3D 
 
-Inspired by the classic game of [Breakout on Atari 2600] (https://www.youtube.com/watch?v=Up-a5x3coC0)
+Inspired by the classic game of [Breakout on Atari 2600](https://www.youtube.com/watch?v=Up-a5x3coC0)
 
-An [Eric Laslo](https://github.com/erl67/) and [Yanbo Wang] (https://github.com/YanboWang76) production
+An [Eric Laslo](https://github.com/erl67/) and [Yanbo Wang](https://github.com/YanboWang76) production
 
 
 ## Instructions:
@@ -11,7 +11,13 @@ Position controller as desired, hit any key to begin
 
 ## Controls:
 
-### Movement – Mouse to move / or Controller
+### Movement – Mouse to move
+
+# Controller:
+
+Move Left/Right - Move
+
+Tilt Forward/Back - Power
 
 
 ### Camera: 
@@ -34,9 +40,9 @@ Right Mouse – self-destruct
 
 R – reset
 
-N – next level
+1,2,3,4 - select level
 
-F1 - easy mode
+H - easy mode, ball never loses
 
 ### Sound:
 
@@ -66,7 +72,4 @@ https://funnyvale.com/connecting-mpu6050-gyroscope-accelerometer-to-arduino/
 https://www.amazon.com/gp/product/B008BOPN40
 
 https://www.alanzucconi.com/2015/10/07/how-to-integrate-arduino-with-unity/
-
-
-
 
