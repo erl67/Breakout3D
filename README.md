@@ -1,8 +1,8 @@
 # Breakout 3D 
 
-Inspired by the classic game of [Breakout on Atari 2600](https://www.youtube.com/watch?v=Up-a5x3coC0)
+Inspired by the classic game of [Breakout on Atari 2600](https://www.youtube.com/watch?v=Up-a5x3coC0) and [Ricochet](https://www.youtube.com/watch?v=cBIedv-i8eo)
 
-An [Eric Laslo](https://github.com/erl67/) and [Yanbo Wang](https://github.com/YanboWang76) production
+An [Eric Laslo](https://github.com/erl67) and [Yanbo Wang](https://github.com/YanboWang76) production
 
 
 ## Instructions:
@@ -18,6 +18,8 @@ Position controller as desired, hit any key to begin
 Move Left/Right - Move
 
 Tilt Forward/Back - Power
+
+Shift Key - Toggle between Accelerometer/Gyro mode
 
 
 ### Camera: 

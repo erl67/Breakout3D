@@ -47,7 +47,6 @@ public class CameraController : MonoBehaviour
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
 
-
         if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.Space))
         {
             ResetCamera();
@@ -97,7 +96,7 @@ public class CameraController : MonoBehaviour
         //uncomment for camera follow player
         //transform.position = player.transform.position + offset;
 
-        fov += (Input.GetAxis("Mouse ScrollWheel") * 50f);
+        fov += (Input.GetAxis("Mouse ScrollWheel") * -50f);
 
         fov = Mathf.Clamp(fov, minFov, maxFov);
         Camera.main.fieldOfView = fov;

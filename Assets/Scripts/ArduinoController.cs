@@ -16,34 +16,29 @@ public class ArduinoController : MonoBehaviour
     public float smooth = 2.0F;
     private Vector3 prevPosition;
 
-    private bool useController = true;
+    private bool useController = true, gyroOnly = false;
 
     private Rigidbody player;
     private Rigidbody ball;
 
     private Vector3 force, prevForce;
     private int ax, ay, az;
-    private int axDiff, ayDiff, azDiff;
     private int gx, gy, gz;
-
-    public int[] axA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    public int[] ayA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    public int[] gxA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    public int[] gyA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
     private int axStart = 0, ayStart = 0;
     private int gxStart = 0, gyStart = 0;
     private int moveX = 0, moveY = 0;
     private int turnX = 0, turnY = 0;
+    private int[] axA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private int[] ayA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private int[] gxA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private int[] gyA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     private int counter = 0;
-    protected int countMax = 9;  //first 10 readings to calibrate
-
-    protected int readInterval = 2; //number of readings to take before averaging for movement
+    protected int countMax = 9;  //first 10 readings to calibrate, adjusted downward after calibration
+    protected int readInterval = 0; //number of readings to wait before averaging for movement
 
     public float moveScale = 20f;
     public float bumpPower = 10f;
-
 
     void MovementData(string s)
     {
@@ -58,13 +53,14 @@ public class ArduinoController : MonoBehaviour
             gx = int.Parse(arduinoData[3]) / 100;
             gy = int.Parse(arduinoData[4]) / 100;
             gz = int.Parse(arduinoData[5]) / 100;
+            //Debug.Log("ax:" + ax + " ay:" + ay + " az:" + az + " gx:" + gx + " gy:" + gy + " gz:" + gz);
 
             axA[counter] = ax;
             ayA[counter] = ay;
             gxA[counter] = gx;
             gyA[counter] = gy;
 
-            counter++;
+            counter = counter > countMax ? 0 : counter++;
         }
 
         if ((axStart==0) && (ayStart==0) && (counter == countMax)) //calibrate based on first 10 readings
@@ -88,61 +84,50 @@ public class ArduinoController : MonoBehaviour
             moveY = (int) ayA.Average() - ayStart;
             turnX = (int) gxA.Average() - gxStart;
             turnY = (int) gyA.Average() - gyStart;
-
-            Debug.Log("move  x:" + moveX + ", y:" + moveY + "\t turn: " + turnX + " " + turnY);
-
+            Debug.Log("Motion  x:" + moveX + ",  y:" + moveY + "\t turn: " + turnX + ",  y:" + turnY);
         }
-
-        if (Mathf.Abs(moveX) > 10)   //move at certain threshold
+        else
         {
-            //Debug.Log("\tmove  x:" + moveX + " y:" + turnY);
+            moveX = moveY = turnX = turnY = 0;
         }
 
-        if (Mathf.Abs(turnY) > 10)   //increase hit power
+        if (!gyroOnly)
         {
-            //Debug.Log("\tturn  y:" + turnY);
-        }
+            if (Mathf.Abs(moveX) > 20)
+            {
+                player.velocity = Vector3.zero;
+                force = new Vector3(moveX, 0f, 0f) * moveScale;
 
-        counter = counter >= countMax ? 0 : counter;
+                player.AddForce(force, ForceMode.Acceleration);
 
-        //Debug.Log(player.velocity + "\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
-        //Debug.Log("\t" + ax + " " + ay + " " + az + " " + gx + " " + gy + " " + gz);
+                Debug.Log("side force: " + force.ToString() + " velocity: " + player.velocity);
 
-        prevForce = player.velocity; //can't remember why I saved this yet, might be useful
-
-        if (Mathf.Abs(moveX) > 20) {
-
-            player.velocity = Vector3.zero;
-            force = new Vector3(moveX, 0f, 0f) * moveScale;
-
-            player.AddForce(force, ForceMode.Acceleration);
-
-            //Debug.Log("side force:\t"+force.ToString());
-
-            Debug.Log(player.velocity);
-            moveX = 0;            
-        }
-
-        /*
-        if (Mathf.Abs(turnY) > 10)
+                moveX = 0;
+            }
+        } else
         {
-            force = new Vector3(0f, turnY, 0f);
-            Debug.Log("up force:\t" + force.ToString());
+            Debug.Log("gyro mode");
+            player.GetComponent<Renderer>().material.color = new Color(1f, 1f, 0f);
 
-            //this force needs to be transfered to the ball on collision
-            //not sure how to do 'correctly', going to put it in mass and can grab it from there 
-            //and read in the BallController collision
-            player.mass = turnY * bumpPower;
-            //player.AddForce(force, ForceMode.Acceleration);
+        }
+
+        if (Mathf.Abs(turnY) > 30)   //increase hit power
+        {
+            player.mass = (int)(100 + turnY);
+            Debug.Log("Power y:" + turnY + "  player.mass:" + player.mass);
+
+            player.GetComponent<Renderer>().material.color = new Color(.5f, .5f, .5f);
             turnY = 0;
-        } */
+        }
+
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {
-            Debug.Log("changing mode");
+            gyroOnly = gyroOnly == false ? true : false;
+            Debug.Log("changing mode  gyroOnly = " + gyroOnly);
         }
     }
 
@@ -150,7 +135,6 @@ public class ArduinoController : MonoBehaviour
     {
         player = GameObject.Find("Player").gameObject.GetComponent<Rigidbody>();
         //ball = GameObject.Find("Ball").gameObject.GetComponent<Rigidbody>(); //have have to wait on instance
-
 
         if (useController)
         {
@@ -170,7 +154,6 @@ public class ArduinoController : MonoBehaviour
                 OpenConnection();
                 //WriteToArduino("PING");
 
-                //StartCoroutine(AsynchronousReadFromArduino((string s) => Debug.Log(s), () => Debug.LogError("Error!"), 10000f));
                 StartCoroutine(AsynchronousReadFromArduino((string s) => MovementData(s), () => Debug.LogError("Error!"), 10000f));
             }
         }
@@ -206,8 +189,8 @@ public class ArduinoController : MonoBehaviour
             }
             else
             {
-                sp.Open();  // opens the connection
-                sp.ReadTimeout = 50;  // sets the timeout value before reporting error
+                sp.Open();
+                sp.ReadTimeout = 50;  // sets timeout value before reporting error
                 Debug.Log("Port Opened: " + sp.PortName);
             }
         }
