@@ -5,23 +5,18 @@ using UnityEngine;
 public class blockController : MonoBehaviour {
 
 	Rigidbody rb;
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-	private void OnCollisionEnter(Collision other)
+    void Start () {
+        rb = GetComponent<Rigidbody>();
+    }
+
+    private void OnCollisionEnter(Collision other)
 	{
 
 		if (other.gameObject.tag.Equals ("ball")||other.gameObject.tag.Equals ("block")) 
 		{
-			rb = GetComponent<Rigidbody> ();
 			rb.constraints = RigidbodyConstraints.None;
+            rb.constraints = RigidbodyConstraints.FreezePositionX;
 		}
 
 		if (other.gameObject.tag.Equals ("bottom")) 

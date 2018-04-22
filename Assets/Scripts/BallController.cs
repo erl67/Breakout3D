@@ -110,8 +110,8 @@ public class BallController : MonoBehaviour {
         if (other.gameObject.tag.Equals("player"))
         {
 			bounce.Play ();
-            var power = other.gameObject.GetComponent<Rigidbody>().mass;
-            Debug.Log(power);
+            //var power = other.gameObject.GetComponent<Rigidbody>().mass;
+            //Debug.Log(power);
         }
 
 		if (other.gameObject.tag.Equals("left") || other.gameObject.tag.Equals("right"))
@@ -134,12 +134,6 @@ public class BallController : MonoBehaviour {
             BallDies();
         }
     }
-
-    //private void OnBecameInvisible()
-    //{
-    //    GameController.lives--;
-    //    Destroy(gameObject);
-    //}
 
     private void BallDies()
     {

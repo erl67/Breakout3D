@@ -68,7 +68,7 @@ public class CameraController : MonoBehaviour
             rotateLeft = false;
         }
 
-        else if (score != 0)
+        else if (score != 0 && false) //stop spinning to test paddle
         {
             if (rotate)
             {
@@ -151,5 +151,12 @@ public class CameraController : MonoBehaviour
         rotateRight = false;
         rotate = false;
         scoreChange = score;
+    }
+
+    public void SwitchRotation()
+    {
+        rotateLeft = !rotateLeft;
+        rotateRight = !rotateRight;
+        rotate = true;
     }
 }

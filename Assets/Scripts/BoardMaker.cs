@@ -89,6 +89,17 @@ public class BoardMaker : MonoBehaviour {
 
             }
         }
+
+        //var blocks = GameObject.FindGameObjectsWithTag("block");
+        //foreach (var block in blocks)
+        //{
+        //    Debug.Log(block.transform.position.x + " " + block.transform.position.y);
+        //    if (Mathf.Abs(block.transform.position.y) > 35)
+        //    {
+        //        Debug.Log("true");
+        //        Destroy(block);
+        //    }           
+        //}
     }
 	
 }
