@@ -35,10 +35,14 @@ public class ArduinoController : MonoBehaviour
 
     private int counter = 0;
     protected int countMax = 9;  //first 10 readings to calibrate, adjusted downward after calibration
-    protected int readInterval = 0; //number of readings to wait before averaging for movement
+    protected int readInterval = 1; //number of readings to wait before averaging for movement
+    protected int motionThreshold = 30;
+    protected int motionGyroThreshold = 40;
+    protected int powerThreshold = 30;
 
     public float moveScale = 20f;
-    public float bumpPower = 10f;
+    public float moveGyroScale = .5f;
+    public float powerScale = 10f;
 
     void MovementData(string s)
     {
@@ -48,9 +52,9 @@ public class ArduinoController : MonoBehaviour
         if (arduinoData.Length == 6)
         {                  
             ay = int.Parse(arduinoData[0]) / 100;   //swapped from the sketch
-            ax = int.Parse(arduinoData[1]) / 100;   //see x/y marked on chip
+            ax = -1 * int.Parse(arduinoData[1]) / 100;   //see x/y marked on chip
             az = int.Parse(arduinoData[2]) / 100;
-            gx = int.Parse(arduinoData[3]) / 100;
+            gx = -1 * int.Parse(arduinoData[3]) / 100;
             gy = int.Parse(arduinoData[4]) / 100;
             gz = int.Parse(arduinoData[5]) / 100;
             //Debug.Log("ax:" + ax + " ay:" + ay + " az:" + az + " gx:" + gx + " gy:" + gy + " gz:" + gz);
@@ -59,9 +63,9 @@ public class ArduinoController : MonoBehaviour
             ayA[counter] = ay;
             gxA[counter] = gx;
             gyA[counter] = gy;
-
-            counter = counter > countMax ? 0 : counter++;
+            counter++;
         }
+
 
         if ((axStart==0) && (ayStart==0) && (counter == countMax)) //calibrate based on first 10 readings
         {
@@ -84,37 +88,51 @@ public class ArduinoController : MonoBehaviour
             moveY = (int) ayA.Average() - ayStart;
             turnX = (int) gxA.Average() - gxStart;
             turnY = (int) gyA.Average() - gyStart;
-            Debug.Log("Motion  x:" + moveX + ",  y:" + moveY + "\t turn: " + turnX + ",  y:" + turnY);
+
+            //Debug.Log("Motion  accl (x:" + moveX + ",  y:" + moveY + ")\t gyro (x: " + turnX + ",  y:" + turnY + ")");
         }
         else
         {
             moveX = moveY = turnX = turnY = 0;
         }
 
+        counter = counter >= countMax ? 0 : counter;
+        //Debug.Log(counter + " cm" + countMax + " ri" + readInterval);
+
         if (!gyroOnly)
         {
-            if (Mathf.Abs(moveX) > 20)
+            if (Mathf.Abs(moveX) > motionThreshold)
             {
                 player.velocity = Vector3.zero;
                 force = new Vector3(moveX, 0f, 0f) * moveScale;
 
-                player.AddForce(force, ForceMode.Acceleration);
+                player.AddForce(force, ForceMode.Impulse);
 
-                Debug.Log("side force: " + force.ToString() + " velocity: " + player.velocity);
-
+                Debug.Log("move force: " + force.ToString() + " velocity: " + player.velocity);
                 moveX = 0;
             }
-        } else
+        }
+        else
         {
-            Debug.Log("gyro mode");
             player.GetComponent<Renderer>().material.color = new Color(1f, 1f, 0f);
+
+            if (Mathf.Abs(turnX) > motionThreshold)
+            {
+                player.velocity = Vector3.zero;
+                force = new Vector3(turnX, 0f, 0f) * moveGyroScale;
+
+                player.AddForce(force, ForceMode.Impulse);
+
+                Debug.Log("gyro force: " + force.ToString() + " velocity: " + player.velocity);
+                turnX = 0;
+            }
 
         }
 
-        if (Mathf.Abs(turnY) > 30)   //increase hit power
+        if (Mathf.Abs(turnY) > powerThreshold)   //increase hit power
         {
             player.mass = (int)(100 + turnY);
-            Debug.Log("Power y:" + turnY + "  player.mass:" + player.mass);
+            Debug.Log("power y:" + turnY + "  player.mass:" + player.mass);
 
             player.GetComponent<Renderer>().material.color = new Color(.5f, .5f, .5f);
             turnY = 0;

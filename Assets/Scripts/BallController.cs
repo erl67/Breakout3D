@@ -12,7 +12,6 @@ public class BallController : MonoBehaviour {
     private Renderer mr;
 	private float constantSpeed = 30f;
 	private GameController Controller;
-    //public Text txtScore, txtLives;
 
     public AudioSource blockHit;
 	public AudioSource blockDied;
@@ -51,16 +50,15 @@ public class BallController : MonoBehaviour {
         mr = ball.GetComponent<Renderer>();
         player = GameObject.Find("Player").gameObject;
 
-        //txtScore = GameObject.Find("txtScore").GetComponent<Text>();
-        //txtLives = GameObject.Find("txtLives").GetComponent<Text>();
-
         force = new Vector3(2f, 10f, 0f) * 5f;
 		rb.AddForce(force, ForceMode.Impulse);
 
 		topWall = GameObject.FindWithTag("top");
 		leftWall = GameObject.FindWithTag("left");
 		rightWall = GameObject.FindWithTag("right");
-		loopControl = 0;
+        otherMr = topWall.GetComponent<MeshRenderer>();
+
+        loopControl = 0;
 
 		Controller = (GameController)GameObject.Find ("Main").GetComponent("GameController");
 
@@ -75,7 +73,7 @@ public class BallController : MonoBehaviour {
 			loopControl = 0;
 		}
 		loopControl++;
-		Debug.Log (loopControl);
+		//Debug.Log (loopControl);
     }
 
     private void OnCollisionEnter(Collision other)
@@ -93,7 +91,7 @@ public class BallController : MonoBehaviour {
 			//!!Random change a renderer, I comment it however
             //mr.material.color *= other.gameObject.GetComponent<Renderer>().material.color;
 
-
+       
 
             //force = new Vector3(Random.Range(-1 * blockForce, blockForce), 0f, 0) * 2f;
             //force = new Vector3(blockForce, 0f, 0) * 2f; //need to find and set magnitude from edge
@@ -122,8 +120,6 @@ public class BallController : MonoBehaviour {
             //force = new Vector3(0f, 10f, 0f) * playerForce;
             //rb.AddForce(force, ForceMode.Impulse);
 			rb.velocity  = constantSpeed * (rb.velocity.normalized);
-            //GameController.score++;
-            //txtScore.text = "Score: " + GameController.score;
         }
 
 		if (other.gameObject.tag.Equals("left")||other.gameObject.tag.Equals("right"))
@@ -134,8 +130,6 @@ public class BallController : MonoBehaviour {
 				otherMr = rightWall.GetComponent<MeshRenderer> ();
 			otherMr.enabled = true;
 			rb.velocity  = constantSpeed * (rb.velocity.normalized);
-            //GameController.score += -1;
-            //txtScore.text = "Score: " + GameController.score;
         }
 
         if (other.gameObject.tag.Equals("top"))

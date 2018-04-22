@@ -49,7 +49,7 @@ public class CameraController : MonoBehaviour
     {
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
-        score = Controller.GetScore();
+        score = Controller.GetScore() + 1;
 
         if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.Space))
         {

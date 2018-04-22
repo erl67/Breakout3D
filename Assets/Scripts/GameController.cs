@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
 
     public static int score = 0, lives = 3;
 
+    private int blocksRemaing = 100;
+
     private void Awake()
     {
         if (instance == null)
@@ -85,8 +87,27 @@ public class GameController : MonoBehaviour
         return score;
     }
 
+    public void SetLives(int delta)
+    {
+        lives += delta;
+        txtLives.text = "Lives: " + lives;
+    }
+
+    public void SetCenter(string s)
+    {
+        if (txtHelp != null) txtCenter.text = s;
+    }
+
+    public void SetHelp(string s)
+    {
+        if (txtHelp != null) txtHelp.text = s;
+    }
+
     void Update()
     {
+        blocksRemaing = GameObject.FindGameObjectsWithTag("block").Length; //on next level
+        //foreach (GameObject block in blocks) Destroy(block);
+
         if (GameController.instance.gameOver)
         {
             PlayerDead();
@@ -94,18 +115,19 @@ public class GameController : MonoBehaviour
 
         if (gameOver && Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene(0);
             GameObject.Find("OverheadLight").gameObject.GetComponent<Light>().enabled = false;
             GameObject.Find("Spotlight").gameObject.GetComponent<Light>().enabled = true;
         }
 
-        if (!spawn && Input.GetKeyDown(KeyCode.N))
+        if (blocksRemaing < 10 && Input.GetKeyDown(KeyCode.N))
         {
-            PlayerDead();
+            //PlayerDead();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) || (Input.GetKeyDown(KeyCode.LeftControl) && (Input.GetKeyDown(KeyCode.C))))
         {
             PlayerDead();
             UnityEditor.EditorApplication.isPlaying = false;  //hide for build
@@ -120,31 +142,33 @@ public class GameController : MonoBehaviour
             AudioListener.volume = Time.timeScale == 0 ? 0f : volume;
         }
 
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            AudioListener.volume = AudioListener.volume * .9f;
+            SceneManager.LoadScene(0);
         }
-
-        if (Input.GetKeyDown(KeyCode.K))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            AudioListener.volume = AudioListener.volume * 1.1f;
+            SceneManager.LoadScene(1);
         }
-
-        if (Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.U))
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            GameObject.Find("Player").GetComponent<SphereCollider>().enabled = false;
+            SceneManager.LoadScene(2);
         }
-
-        if (Input.GetKeyDown(KeyCode.Backspace))
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            SceneManager.LoadScene(3);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             //Time.timeScale = 1;
         }
 
-        if (Input.GetKeyDown(KeyCode.Home))
+        if (Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.H))
         {
-            SceneManager.LoadScene(0);
+            GameObject.Find("Player").GetComponent<SphereCollider>().enabled = false;
         }
+
 
         if (timer < Time.time)
         {
@@ -172,7 +196,7 @@ public class GameController : MonoBehaviour
 
     public void PlayerDead()
     {
-        StopAllCoroutines();
+        //StopAllCoroutines();
 
         MuteBG();
         spawn = false;

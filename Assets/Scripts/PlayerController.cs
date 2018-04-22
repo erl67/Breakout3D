@@ -16,8 +16,6 @@ using UnityEngine.UI;
     private float moveH, moveV, moveSpeed;
     private float playerScale;
 
-
-    //public AudioSource[] sounds;
     public AudioSource loseLife, endSound, coin;
 
     public Text txtScore, txtLives, txtCenter;
@@ -47,14 +45,6 @@ using UnityEngine.UI;
 
         life = GameController.lives;
 
-        //txtLives.text = "Lives: " + life;
-        //txtScore.text = "Score: " + GameController.score;
-
-        //sounds = GetComponents<AudioSource>();
-        //bounce = loseLife = endSound = null;
-
-        //bounce = sounds[0];
-        //loseLife = sounds[1];
         //endSound = GameObject.Find("GameOver").gameObject.GetComponent<AudioSource>();
 
         yield return new WaitForSecondsRealtime(2);
@@ -68,8 +58,8 @@ using UnityEngine.UI;
         {
             yield return null;
         }
-        txtCenter.text = "";
-
+        Controller.SetCenter(" ");
+        
         Time.timeScale = 1;
         player.transform.position = new Vector3(0f, 0f, 0f);
     }
@@ -84,7 +74,6 @@ using UnityEngine.UI;
 		}
         if (life != GameController.lives)
         {
-            //txtLives.text = "Lives: " + GameController.lives;
             life = GameController.lives;
             LoseLife();
         }
@@ -146,18 +135,8 @@ using UnityEngine.UI;
 		}
 	}
 
-    private void OnBecameInvisible()
-    {
-        GameController.lives--;
-        LoseLife();
-     }
-
-
     public void LoseLife()
     {
-        //lives--;
-        //txtLives.text = "Lives: " + lives;
-
         int lives = GameController.lives;// Shall we make this variable a global variable? --Yanbo
 
         if (lives < 1) { endSound.Play(); }
@@ -167,13 +146,12 @@ using UnityEngine.UI;
 
         if (lives < 1)
         {
-            txtCenter.text = "Game Over\nYour Final Score is: " + GameController.score.ToString();
-            txtCenter.text += "\n\nPress (r) to try again";
+            Controller.SetCenter("Game Over\nYour Final Score is: " + GameController.score.ToString() + "\n\nPress (r) to try again");
             GameController.instance.PlayerDead();
         }
         else
         {
-            txtCenter.text = "\nYou dropped the ball.\nPress (r or space) to continue";
+            Controller.SetCenter("\nYou dropped the ball.\nPress(r or space) to continue");
             NewLife();
         }
 		ballRemaining = 2;
