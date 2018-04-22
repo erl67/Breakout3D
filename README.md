@@ -13,7 +13,7 @@ Position controller as desired, hit any key to begin
 
 ### Movement – Mouse to move
 
-# Controller:
+### Controller:
 
 Move Left/Right - Move
 
@@ -59,7 +59,7 @@ I - toggle all lights
 
 
 
-Arduino Resources: 
+####Arduino Resources: 
 
 https://www.cdiweb.com/datasheets/invensense/MPU-6050_DataSheet_V3%204.pdf
 
