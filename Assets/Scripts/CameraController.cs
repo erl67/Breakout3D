@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     private float x, y, moveH, moveV;
     private Vector3 rotateValue;
 
-    public float minFov = 15f, maxFov = 120f, sensitivity = 5f;
+    public float minFov = 15f, maxFov = 120f, sensitivity = 50f;
     public float fov, fovStart;
 
     public Vector3 camStartP;
@@ -18,12 +18,20 @@ public class CameraController : MonoBehaviour
 
     public Light overhead, spotlight;
 
+    //private Rigidbody player;
+    private Rigidbody ball;
+
+    private bool rotateLeft = false;
+    private bool rotateRight = false;
+
     void Start()
     {
         overhead = GameObject.Find("OverheadLight").gameObject.GetComponent<Light>();
         spotlight = GameObject.Find("Spotlight").gameObject.GetComponent<Light>();
         spotlight.enabled = true;
         overhead.enabled = false;
+
+        //player = GameObject.Find("Player").gameObject.GetComponent<Rigidbody>();
 
         offset = transform.position - player.transform.position;
         Debug.Log("Camera: " + transform.position + "  Player: " + player.transform.position);
@@ -34,28 +42,26 @@ public class CameraController : MonoBehaviour
         fovStart = fov;
     }
 
-    void LateUpdate()
-    {
-        //uncomment for camera follow player
-        //transform.position = player.transform.position + offset;
-
-        //https://answers.unity.com/questions/218347/how-do-i-make-the-camera-zoom-in-and-out-with-the.html
-        fov += Input.GetAxis("Mouse ScrollWheel") * sensitivity;
-        fov = Mathf.Clamp(fov, minFov, maxFov);
-        Camera.main.fieldOfView = fov;
-    }
-
     void Update()
     {
-        //https://answers.unity.com/questions/1179680/how-to-rotate-my-camera.html
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
-        rotateValue = new Vector3(moveV, moveH * -1, 0);
-        transform.eulerAngles = transform.eulerAngles - rotateValue;
 
-        if (Input.GetMouseButtonDown(2))
+
+        if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.Space))
         {
             ResetCamera();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            rotateLeft = rotateLeft == false ? true : false;
+            rotateRight = false;
+        }
+        else if (Input.GetKeyDown(KeyCode.X))
+        {
+            rotateRight = rotateRight == false ? true : false;
+            rotateLeft = false;
         }
 
         if (Input.GetKeyDown(KeyCode.L))
@@ -72,6 +78,29 @@ public class CameraController : MonoBehaviour
         {
             LightSwitch();
         }
+    }
+
+    void LateUpdate()
+    {
+        if (rotateLeft == true)
+        {
+            transform.RotateAround(player.transform.position, Vector3.up, 10f * Time.deltaTime);
+        }
+        else if (rotateRight == true)
+        {
+            transform.RotateAround(player.transform.position, Vector3.down, 10f * Time.deltaTime);
+        }
+
+        rotateValue = new Vector3(moveV, moveH * -1, 0);    //move camera with WASD
+        transform.eulerAngles = transform.eulerAngles - rotateValue;
+
+        //uncomment for camera follow player
+        //transform.position = player.transform.position + offset;
+
+        fov += (Input.GetAxis("Mouse ScrollWheel") * 50f);
+
+        fov = Mathf.Clamp(fov, minFov, maxFov);
+        Camera.main.fieldOfView = fov;
     }
 
     public static void LightSwitch()

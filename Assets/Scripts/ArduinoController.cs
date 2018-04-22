@@ -37,11 +37,12 @@ public class ArduinoController : MonoBehaviour
     private int turnX = 0, turnY = 0;
 
     private int counter = 0;
-    protected int countMax = 9;  //first 10 readings to calibrate, then every 3
-    protected int readInterval = 0;
+    protected int countMax = 9;  //first 10 readings to calibrate
 
-    public float moveSpeed = 30f;
-    public float bumpPower = 30f;
+    protected int readInterval = 2; //number of readings to take before averaging for movement
+
+    public float moveScale = 20f;
+    public float bumpPower = 10f;
 
 
     void MovementData(string s)
@@ -87,16 +88,19 @@ public class ArduinoController : MonoBehaviour
             moveY = (int) ayA.Average() - ayStart;
             turnX = (int) gxA.Average() - gxStart;
             turnY = (int) gyA.Average() - gyStart;
+
+            Debug.Log("move  x:" + moveX + ", y:" + moveY + "\t turn: " + turnX + " " + turnY);
+
         }
 
         if (Mathf.Abs(moveX) > 10)   //move at certain threshold
         {
-            Debug.Log("\tmove  x:" + moveX + " y:" + moveY);
+            //Debug.Log("\tmove  x:" + moveX + " y:" + turnY);
         }
 
         if (Mathf.Abs(turnY) > 10)   //increase hit power
         {
-            Debug.Log("\tturn  y:" + turnY);
+            //Debug.Log("\tturn  y:" + turnY);
         }
 
         counter = counter >= countMax ? 0 : counter;
@@ -106,16 +110,20 @@ public class ArduinoController : MonoBehaviour
 
         prevForce = player.velocity; //can't remember why I saved this yet, might be useful
 
-        if (Mathf.Abs(moveX) > 10) {
-            
-            //player.velocity = Vector3.zero;
+        if (Mathf.Abs(moveX) > 20) {
+
+            player.velocity = Vector3.zero;
             force = new Vector3(moveX, 0f, 0f) * moveScale;
 
-            player.AddForce(force, ForceMode.Impulse);
-            Debug.Log("side force:\t"+force.ToString());
+            player.AddForce(force, ForceMode.Acceleration);
+
+            //Debug.Log("side force:\t"+force.ToString());
+
+            Debug.Log(player.velocity);
             moveX = 0;            
         }
 
+        /*
         if (Mathf.Abs(turnY) > 10)
         {
             force = new Vector3(0f, turnY, 0f);
@@ -124,15 +132,25 @@ public class ArduinoController : MonoBehaviour
             //this force needs to be transfered to the ball on collision
             //not sure how to do 'correctly', going to put it in mass and can grab it from there 
             //and read in the BallController collision
-            player.mass = turnY * bump;
+            player.mass = turnY * bumpPower;
             //player.AddForce(force, ForceMode.Acceleration);
             turnY = 0;
+        } */
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Debug.Log("changing mode");
         }
     }
 
     void Start()
     {
         player = GameObject.Find("Player").gameObject.GetComponent<Rigidbody>();
+        //ball = GameObject.Find("Ball").gameObject.GetComponent<Rigidbody>(); //have have to wait on instance
+
 
         if (useController)
         {
