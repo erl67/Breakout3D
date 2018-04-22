@@ -1,11 +1,20 @@
-## Breakout 3D
+# Breakout 3D 
 
-#Controls:
+Inspired by the classic game of [Breakout on Atari 2600] (https://www.youtube.com/watch?v=Up-a5x3coC0)
 
-Movement – Mouse to move / or Controller
+An [Eric Laslo](https://github.com/erl67/) and [Yanbo Wang] (https://github.com/YanboWang76) production
 
 
-Camera: 
+## Instructions:
+
+Position controller as desired, hit any key to begin
+
+## Controls:
+
+### Movement – Mouse to move / or Controller
+
+
+### Camera: 
 
 Scroll Wheel - Zoom
 
@@ -13,19 +22,34 @@ WASD - Tilt
 
 Z/X - Rotate left/right toggle
 
+Spacebar - Reset Camera
+
+### Game Options: 
+
 P – Pause
 
 Q – Quit
 
 Right Mouse – self-destruct
 
-K/M – Volume up/down
-
 R – reset
 
 N – next level
 
 F1 - easy mode
+
+### Sound:
+
+K/M – Volume up/down
+
+### Lighting: 
+
+L - toggle spotlight
+
+O - toggle overhead light
+
+I - toggle all lights
+
 
 
 
@@ -42,10 +66,6 @@ https://funnyvale.com/connecting-mpu6050-gyroscope-accelerometer-to-arduino/
 https://www.amazon.com/gp/product/B008BOPN40
 
 https://www.alanzucconi.com/2015/10/07/how-to-integrate-arduino-with-unity/
-
-
-
-Background:
 
 
 
