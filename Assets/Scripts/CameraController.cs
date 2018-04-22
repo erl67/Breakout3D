@@ -128,5 +128,7 @@ public class CameraController : MonoBehaviour
         Camera.main.fieldOfView = 90;
         Camera.main.transform.position = camStartP;
         Camera.main.transform.rotation = camStartR;
+        rotateLeft = false;
+        rotateRight = false;
     }
 }
