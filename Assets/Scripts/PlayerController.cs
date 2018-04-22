@@ -14,7 +14,7 @@ using UnityEngine.UI;
 	private int ballRemaining = 2;
     private float timer = 1f;
     private float moveH, moveV, moveSpeed;
-    private float playerScale;
+    private float playerScale, avScale;
 
     public AudioSource loseLife, endSound, coin;
 
@@ -27,18 +27,22 @@ using UnityEngine.UI;
             case 0:
                 moveSpeed = 1500f;
                 playerScale = 3f;
+                avScale = -10f;
                 break;
             case 1:
                 moveSpeed = 1200f;
                 playerScale = 2.7f;
+                avScale = -25f;
                 break;
             case 2:
                 moveSpeed = 1500f;
                 playerScale = 2.5f;
+                avScale = -50f;
                 break;
             default:
-                moveSpeed = Random.Range(800f, 2000f); ;
+                moveSpeed = Random.Range(800f, 2000f);
                 playerScale = Random.Range(1.5f, 4f);
+                avScale = -100f;
                 break;
         }
         rb = gameObject.GetComponent<Rigidbody>();
@@ -70,9 +74,7 @@ using UnityEngine.UI;
 	{
 		if (Input.GetMouseButtonDown (0) && ballRemaining != 0) 
 		{
-			var ball = Instantiate (ballPrefab) as GameObject;
-			ball.transform.position = (transform.position + new Vector3 (0f, 2f, 0f));
-			ballRemaining--;
+            LaunchBall();
 		}
         if (life != GameController.lives)
         {
@@ -97,29 +99,43 @@ using UnityEngine.UI;
     void FixedUpdate()
     {
         float mouseH = Input.GetAxis("Mouse X");
-        float mouseV = Input.GetAxis("Mouse Y");
-		float keyboardH = 0f;
+        //float mouseV = Input.GetAxis("Mouse Y");
+		//float keyboardH = 0f;
 
-        if (mouseH != 0f || mouseV != 0f)
+        if (mouseH != 0f)
         {
             Vector3 motion = new Vector3(mouseH * moveSpeed, 0f, 0f);
-            rb.AddForce(motion * moveSpeed);
-            Debug.Log("mouseH: " + mouseH + "  v: " + rb.velocity);
+            var force = motion * moveSpeed;
+            rb.AddForce(force);
+            Debug.Log("mouseH: " + mouseH + " force: " + motion+ " v: " + rb.velocity);
+            if (!Input.GetKeyDown(KeyCode.F))
+                rb.velocity = Vector3.zero;
         }
 
         //not sure what this does anymore
         //Vector3 keyboardMotion = new Vector3 (keyboardH, 0f, 0f);
         //rb.AddForce (keyboardMotion * moveSpeed);
 
-        if (!Input.GetKeyDown(KeyCode.F))
-            rb.velocity = Vector3.zero;
+
+    }
+
+    public void LaunchBall()
+    {
+        if (GameObject.FindGameObjectsWithTag("ball").Length < 3)
+        {
+            var ball = Instantiate(ballPrefab) as GameObject;
+            ball.transform.position = (transform.position + new Vector3(0f, 2f, 0f));
+            ballRemaining--;
+        }
     }
 
 	private void OnCollisionEnter(Collision other)
 	{
 		if (other.gameObject.tag.Equals("block"))
 		{
-			int points = (int)other.gameObject.GetComponent<Rigidbody> ().mass;
+            var angular = other.gameObject.GetComponent<Rigidbody>().angularVelocity;
+            other.gameObject.GetComponent<Rigidbody>().angularVelocity = angular * Random.Range(avScale, Mathf.Abs(avScale));
+            int points = (int)other.gameObject.GetComponent<Rigidbody> ().mass;
 			Controller.AddScore(points);
 			//coin.Play ();
 		}
