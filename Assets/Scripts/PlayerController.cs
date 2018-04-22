@@ -8,16 +8,17 @@ using UnityEngine.UI;
     public GameObject player;
 	public GameObject ballPrefab;
     private Rigidbody rb;
+	private GameController Controller;
 
     private int life;
-	private int ballRemaining = 1;
+	private int ballRemaining = 2;
     private float timer = 1f;
     private float moveH, moveV, moveSpeed;
     private float playerScale;
 
 
     //public AudioSource[] sounds;
-    public AudioSource loseLife, endSound;
+    public AudioSource loseLife, endSound, coin;
 
     public Text txtScore, txtLives, txtCenter;
 
@@ -42,10 +43,12 @@ using UnityEngine.UI;
         player = GameObject.Find("Player").gameObject;
         player.transform.localScale = new Vector3(playerScale, 1f, 1f);
 
+		Controller = (GameController)GameObject.Find ("Main").GetComponent("GameController");
+
         life = GameController.lives;
 
-        txtLives.text = "Lives: " + life;
-        txtScore.text = "Score: " + GameController.score;
+        //txtLives.text = "Lives: " + life;
+        //txtScore.text = "Score: " + GameController.score;
 
         //sounds = GetComponents<AudioSource>();
         //bounce = loseLife = endSound = null;
@@ -77,11 +80,11 @@ using UnityEngine.UI;
 		{
 			var ball = Instantiate (ballPrefab) as GameObject;
 			ball.transform.position = (transform.position + new Vector3 (0f, 2f, 0f));
-			ballRemaining = 0;
+			ballRemaining -- ;
 		}
         if (life != GameController.lives)
         {
-            txtLives.text = "Lives: " + GameController.lives;
+            //txtLives.text = "Lives: " + GameController.lives;
             life = GameController.lives;
             LoseLife();
         }
@@ -133,23 +136,15 @@ using UnityEngine.UI;
 
     }
 
-	/*
 	private void OnCollisionEnter(Collision other)
-    {
-		if (other.gameObject.tag.Equals("edge"))
-        {
-            rb.velocity = Vector3.zero;
-        }
-    }
-	/*
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.tag.Equals("edge"))
-        {
-            rb.velocity = Vector3.zero;
-        }
-    }
-    */
+	{
+		if (other.gameObject.tag.Equals("block"))
+		{
+			int points = (int)other.gameObject.GetComponent<Rigidbody> ().mass;
+			Controller.AddScore(points);
+			coin.Play ();
+		}
+	}
 
     private void OnBecameInvisible()
     {
@@ -181,6 +176,7 @@ using UnityEngine.UI;
             txtCenter.text = "\nYou dropped the ball.\nPress (r or space) to continue";
             NewLife();
         }
+		ballRemaining = 2;
 		//endSound.Play();// It is supposed to play the end sound, however it doesn't, I need to figure it out -- Yanbo
     }
 
