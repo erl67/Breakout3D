@@ -80,6 +80,11 @@ public class GameController : MonoBehaviour
 		txtScore.text = "Score: " + score;
 	}
 
+    public int GetScore()
+    {
+        return score;
+    }
+
     void Update()
     {
         if (GameController.instance.gameOver)

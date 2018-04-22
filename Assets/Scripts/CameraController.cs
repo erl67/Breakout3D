@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    private GameController Controller;
     public GameObject player;
     private Vector3 offset;
 
@@ -23,9 +24,11 @@ public class CameraController : MonoBehaviour
 
     private bool rotateLeft = false;
     private bool rotateRight = false;
+    private int score = 0;
 
     void Start()
     {
+        Controller = (GameController)GameObject.Find("Main").GetComponent("GameController");
         overhead = GameObject.Find("OverheadLight").gameObject.GetComponent<Light>();
         spotlight = GameObject.Find("Spotlight").gameObject.GetComponent<Light>();
         spotlight.enabled = true;
@@ -46,6 +49,7 @@ public class CameraController : MonoBehaviour
     {
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
+        score = Controller.GetScore();
 
         if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.Space))
         {
@@ -61,6 +65,16 @@ public class CameraController : MonoBehaviour
         {
             rotateRight = rotateRight == false ? true : false;
             rotateLeft = false;
+        }
+        else if (score % 20 == 0)
+        {
+            rotateLeft = true;
+            rotateRight = false;
+        }
+        else if (score % 10 == 0)
+        {
+            rotateLeft = false;
+            rotateRight = true;
         }
 
         if (Input.GetKeyDown(KeyCode.L))
