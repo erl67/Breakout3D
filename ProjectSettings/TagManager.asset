@@ -13,6 +13,8 @@ TagManager:
   - edge
   - top
   - bottom
+  - right
+  - left
   layers:
   - Default
   - TransparentFX

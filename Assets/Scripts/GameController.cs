@@ -9,12 +9,12 @@ public class GameController : MonoBehaviour
     public static GameController instance;
     public bool gameOver;
     public bool spawn = true, spawnBall = false;
-    private AudioSource background;
+    //private AudioSource background;
 
     private float volume, timer, timer2;
-    public Text txtCenter, txtHelp;
+    public Text txtScore, txtLives, txtCenter, txtHelp;
 
-    public static int score = 0, lives = 9;
+    public static int score = 0, lives = 3;
 
     private void Awake()
     {
@@ -31,13 +31,16 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+		lives = 3;
         AudioListener.volume = .2f;
-        background = GetComponent<AudioSource>();   //background music
 
         StartCoroutine(StartBox());
         Time.timeScale = 0;
         txtCenter.text = "Press any Key to Begin";
         BeginGame();
+
+		txtScore.text = "Score: " + score;
+		txtLives.text = "Lives: " + lives;
 
         switch (SceneManager.GetActiveScene().buildIndex)
         {
@@ -70,6 +73,12 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
         GameObject.Find("Player").transform.position = new Vector3(0f, 0f, 0f);
     }
+
+	public void AddScore(int delta)
+	{
+		score += delta;
+		txtScore.text = "Score: " + score;
+	}
 
     void Update()
     {
@@ -153,7 +162,7 @@ public class GameController : MonoBehaviour
 
     public void MuteBG()
     {
-        background.mute = true;
+        //background.mute = true;
     }
 
     public void PlayerDead()

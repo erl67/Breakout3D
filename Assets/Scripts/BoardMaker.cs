@@ -30,7 +30,7 @@ public class BoardMaker : MonoBehaviour {
                 blockColor = new Color(0f, 0f, 0f);
                 xMod = 3;
                 yMod = 2;
-                scaleMod = 1;
+                scaleMod = 1f;
                 colorMod = 1;
                 break;
             case 1:
