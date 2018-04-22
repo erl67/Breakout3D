@@ -35,16 +35,30 @@ public class BallController : MonoBehaviour {
                 blockRotation = 10f;
                 break;
             case 1:
-
+                ballScale = 2.9f;
+                playerForce = 3f;
+                playerRotation = 1f;
+                blockForce = 50f;
+                blockRotation = 10f;
                 break;
             case 2:
+                ballScale = 3f;
+                playerForce = 3f;
+                playerRotation = 1f;
+                blockForce = 50f;
+                blockRotation = 10f;
                 break;
             default:
+                ballScale = 3f;
+                playerForce = 3f;
+                playerRotation = 1f;
+                blockForce = 50f;
+                blockRotation = 10f;
                 break;
         }
+
         ball = this.gameObject;
         ball.transform.localScale *= ballScale;
-
 
         rb = ball.GetComponent<Rigidbody>();
         mr = ball.GetComponent<Renderer>();
@@ -61,7 +75,6 @@ public class BallController : MonoBehaviour {
         loopControl = 0;
 
 		Controller = (GameController)GameObject.Find ("Main").GetComponent("GameController");
-
     }
 
 	void Update () //I commented the lines that restrict the ball from moving along z axis, but did the same thing in the Unity by checking "Freeze the position (z)"
@@ -73,89 +86,62 @@ public class BallController : MonoBehaviour {
 			loopControl = 0;
 		}
 		loopControl++;
-		//Debug.Log (loopControl);
     }
 
     private void OnCollisionEnter(Collision other)
     {
 		if (other.gameObject.tag.Equals("block"))
 		{ 
-			//var explo = Instantiate (explosion, new Vector3(other.transform.position.x, other.transform.position.y, other.transform.position.z), other.transform.rotation);
-			//!!!!I commented the next line. Because once I make the ball as a prefab, the text lose its attachment to the ball. Therefore, it stops the code from moving forward.
 			//int points = (int) other.gameObject.GetComponent<Rigidbody>().mass;
-
-
-            //Debug.Log("block died : " + gameObject.transform.position + " " + points);
+       
             blockHit.Play();
 
-			//!!Random change a renderer, I comment it however
-            //mr.material.color *= other.gameObject.GetComponent<Renderer>().material.color;
-
-       
-
-            //force = new Vector3(Random.Range(-1 * blockForce, blockForce), 0f, 0) * 2f;
-            //force = new Vector3(blockForce, 0f, 0) * 2f; //need to find and set magnitude from edge
-
-
-            //rb.AddForce(force, ForceMode.Acceleration);
+            //change color of ball based on block hit
+            if (SceneManager.GetActiveScene().buildIndex > 2)
+            {
+                mr.material.color *= other.gameObject.GetComponent<Renderer>().material.color;
+            }
 
             //rb.velocity *= .9f;
             //rb.angularVelocity = rb.angularVelocity * Random.Range(-1 * blockRotation, blockRotation);
-			rb.velocity  = constantSpeed * (rb.velocity.normalized);
-
-			//!!!!So do the next two lines as well
-            //GameController.score += points;
-            //txtScore.text = "Score: " + GameController.score;
-
-
             //Destroy(other.gameObject);
         }
 
         if (other.gameObject.tag.Equals("player"))
         {
 			bounce.Play ();
-            //rb.velocity = Vector3.zero;
-            //rb.angularVelocity = Vector3.zero;
-
-            //force = new Vector3(0f, 10f, 0f) * playerForce;
-            //rb.AddForce(force, ForceMode.Impulse);
-			rb.velocity  = constantSpeed * (rb.velocity.normalized);
+            var power = other.gameObject.GetComponent<Rigidbody>().mass;
+            Debug.Log(power);
         }
 
-		if (other.gameObject.tag.Equals("left")||other.gameObject.tag.Equals("right"))
+		if (other.gameObject.tag.Equals("left") || other.gameObject.tag.Equals("right"))
         {
 			if(other.gameObject.tag.Equals("left"))
 				otherMr = leftWall.GetComponent<MeshRenderer> ();
 			else
 				otherMr = rightWall.GetComponent<MeshRenderer> ();
 			otherMr.enabled = true;
-			rb.velocity  = constantSpeed * (rb.velocity.normalized);
         }
 
         if (other.gameObject.tag.Equals("top"))
         {
 			otherMr = topWall.GetComponent<MeshRenderer> ();
 			otherMr.enabled = true;
-			rb.velocity  = constantSpeed * (rb.velocity.normalized);
-            //rb.velocity = Vector3.zero;
-            //rb.angularVelocity = Vector3.zero;
         }
 
         if (other.gameObject.tag.Equals("bottom"))
         {
-            //mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-			Destroy(gameObject);
-            //rb.transform.localScale *= .5f;
-            //rb.velocity = Vector3.zero;
-            //rb.angularVelocity = Vector3.zero;
-            //rb.useGravity = false;
-            //rb.isKinematic = true;
+            BallDies();
         }
-		rb.velocity  = constantSpeed * (rb.velocity.normalized);
-
     }
 
-    private void OnBecameInvisible()
+    //private void OnBecameInvisible()
+    //{
+    //    GameController.lives--;
+    //    Destroy(gameObject);
+    //}
+
+    private void BallDies()
     {
         GameController.lives--;
         Destroy(gameObject);

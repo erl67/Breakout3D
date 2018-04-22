@@ -25,16 +25,20 @@ using UnityEngine.UI;
         switch (SceneManager.GetActiveScene().buildIndex)
         {
             case 0:
-                moveSpeed = 1000f;
+                moveSpeed = 1500f;
                 playerScale = 3f;
                 break;
             case 1:
-                moveSpeed = 200f;
-                playerScale = 3f;
+                moveSpeed = 1200f;
+                playerScale = 2.7f;
                 break;
             case 2:
+                moveSpeed = 1500f;
+                playerScale = 2.5f;
                 break;
             default:
+                moveSpeed = Random.Range(800f, 2000f); ;
+                playerScale = Random.Range(1.5f, 4f);
                 break;
         }
         rb = gameObject.GetComponent<Rigidbody>();
@@ -44,8 +48,6 @@ using UnityEngine.UI;
 		Controller = (GameController)GameObject.Find ("Main").GetComponent("GameController");
 
         life = GameController.lives;
-
-        //endSound = GameObject.Find("GameOver").gameObject.GetComponent<AudioSource>();
 
         yield return new WaitForSecondsRealtime(2);
     }
@@ -66,11 +68,11 @@ using UnityEngine.UI;
 
     void Update () 
 	{
-		if (Input.GetMouseButtonDown (0)&& ballRemaining!=0) 
+		if (Input.GetMouseButtonDown (0) && ballRemaining != 0) 
 		{
 			var ball = Instantiate (ballPrefab) as GameObject;
 			ball.transform.position = (transform.position + new Vector3 (0f, 2f, 0f));
-			ballRemaining -- ;
+			ballRemaining--;
 		}
         if (life != GameController.lives)
         {
@@ -84,13 +86,15 @@ using UnityEngine.UI;
             LoseLife();
         }
 
-		if (transform.position.x > 30f) transform.position = new Vector3(30f, transform.position.y, 0f);
+        //var newScale = playerScale / 3.0f;
+
+        if (transform.position.x > 30f) transform.position = new Vector3(30f, transform.position.y, 0f);
 		if (transform.position.x < -30f) transform.position = new Vector3(-30f, transform.position.y, 0f);
-		//!!This is for restrict the posistion of the player, because the panel will eventually move out of the playing area under extream circumanstance.
-		//If the scale of the panel changes, these two lines need to be fixed also.
+        //!!This is for restrict the posistion of the player, because the panel will eventually move out of the playing area under extream circumanstance.
+        //If the scale of the panel changes, these two lines need to be fixed also.
     }
 
-    void FixedUpdate()//I nearly rewrite this function, although I disabled the F and H key -- they can no longer move the pad. But the mouse now works better.
+    void FixedUpdate()
     {
         float mouseH = Input.GetAxis("Mouse X");
         float mouseV = Input.GetAxis("Mouse Y");
@@ -100,29 +104,15 @@ using UnityEngine.UI;
         {
             Vector3 motion = new Vector3(mouseH * moveSpeed, 0f, 0f);
             rb.AddForce(motion * moveSpeed);
+            Debug.Log("mouseH: " + mouseH + "  v: " + rb.velocity);
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-        	keyboardH = -1f;
-        }
+        //not sure what this does anymore
+        //Vector3 keyboardMotion = new Vector3 (keyboardH, 0f, 0f);
+        //rb.AddForce (keyboardMotion * moveSpeed);
 
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-			keyboardH = 1f;
-        }
-
-		Vector3 keyboardMotion = new Vector3 (keyboardH, 0f, 0f);
-
-		//rb.velocity = Vector3.zero;
-		rb.AddForce (keyboardMotion * moveSpeed);
-
-
-		if (!Input.GetKey (KeyCode.F) || !Input.GetKey (KeyCode.H) ) 
-		{
-			rb.velocity = Vector3.zero;
-		}
-
+        if (!Input.GetKeyDown(KeyCode.F))
+            rb.velocity = Vector3.zero;
     }
 
 	private void OnCollisionEnter(Collision other)
@@ -131,16 +121,18 @@ using UnityEngine.UI;
 		{
 			int points = (int)other.gameObject.GetComponent<Rigidbody> ().mass;
 			Controller.AddScore(points);
-			coin.Play ();
+			//coin.Play ();
 		}
 	}
 
     public void LoseLife()
     {
-        int lives = GameController.lives;// Shall we make this variable a global variable? --Yanbo
+        int lives = GameController.lives;
 
-        if (lives < 1) { endSound.Play(); }
-        else { loseLife.Play(); }
+        if (lives < 1)
+            endSound.Play();
+        else
+            loseLife.Play();
 
         Time.timeScale = 0;
 
@@ -155,13 +147,10 @@ using UnityEngine.UI;
             NewLife();
         }
 		ballRemaining = 2;
-		//endSound.Play();// It is supposed to play the end sound, however it doesn't, I need to figure it out -- Yanbo
     }
 
     public void NewLife()
     {
-        //var blocks = GameObject.FindGameObjectsWithTag("block"); //on next level
-        //foreach (GameObject block in blocks) Destroy(block);
         StartCoroutine(StartBox());
     }
 }
