@@ -56,10 +56,9 @@ O - toggle overhead light
 
 I - toggle all lights
 
+***
 
-
-
-####Arduino Resources: 
+#### Arduino Resources: 
 
 https://www.cdiweb.com/datasheets/invensense/MPU-6050_DataSheet_V3%204.pdf
 
@@ -69,7 +68,19 @@ https://github.com/jrowberg/i2cdevlib
 
 https://funnyvale.com/connecting-mpu6050-gyroscope-accelerometer-to-arduino/
 
-https://www.amazon.com/gp/product/B008BOPN40
-
 https://www.alanzucconi.com/2015/10/07/how-to-integrate-arduino-with-unity/
 
+
+#### Controller Components
+
+Arduino Uno R3: https://www.amazon.com/gp/product/B074WMHLQ4
+
+Sensor: https://www.amazon.com/gp/product/B008BOPN40
+
+Board: https://www.amazon.com/gp/product/B01N9MIH1T
+
+Wires: https://www.amazon.com/gp/product/B01MSMVZQZ
+
+Hook&Loop Tape: https://www.amazon.com/gp/product/B00FQ937NM
+
+Paddle: https://www.amazon.com/gp/product/B002LIJCP8
