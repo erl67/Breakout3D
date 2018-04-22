@@ -22,9 +22,10 @@ public class CameraController : MonoBehaviour
     //private Rigidbody player;
     private Rigidbody ball;
 
-    private bool rotateLeft = false;
+    private bool rotate = true, rotateLeft = false;
     private bool rotateRight = false;
     private int score = 0;
+    private int scoreChange = 0;
 
     void Start()
     {
@@ -40,7 +41,7 @@ public class CameraController : MonoBehaviour
         Debug.Log("Camera: " + transform.position + "  Player: " + player.transform.position);
 
         fov = Camera.main.fieldOfView;
-        camStartP = Camera.main.transform.position;
+        camStartP = Camera.main.transform.position * 1.1f;
         camStartR = Camera.main.transform.rotation;
         fovStart = fov;
     }
@@ -49,7 +50,7 @@ public class CameraController : MonoBehaviour
     {
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
-        score = Controller.GetScore() + 1;
+        score = Controller.GetScore();
 
         if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.Space))
         {
@@ -66,16 +67,34 @@ public class CameraController : MonoBehaviour
             rotateRight = rotateRight == false ? true : false;
             rotateLeft = false;
         }
-        else if (score % 20 == 0)
+
+        else if (score != 0)
         {
-            rotateLeft = true;
-            rotateRight = false;
+            if (rotate)
+            {
+                if (score % 20 == 0)
+                {
+                    rotate = true;
+                    rotateLeft = true;
+                    rotateRight = false;
+                }
+                else if (score % 10 == 0)
+                {
+                    rotate = true;
+                    rotateLeft = false;
+                    rotateRight = true;
+                }
+            }
+            else
+            {
+                if (scoreChange != score)
+                {
+                    rotate = true;
+                    scoreChange = 0;
+                }
+            }
         }
-        else if (score % 10 == 0)
-        {
-            rotateLeft = false;
-            rotateRight = true;
-        }
+
 
         if (Input.GetKeyDown(KeyCode.L))
         {
@@ -97,11 +116,11 @@ public class CameraController : MonoBehaviour
     {
         if (rotateLeft == true)
         {
-            transform.RotateAround(player.transform.position, Vector3.up, 10f * Time.deltaTime);
+            transform.RotateAround(player.transform.position, Vector3.up, 3f * Time.deltaTime);
         }
         else if (rotateRight == true)
         {
-            transform.RotateAround(player.transform.position, Vector3.down, 10f * Time.deltaTime);
+            transform.RotateAround(player.transform.position, Vector3.down, 3f * Time.deltaTime);
         }
 
         rotateValue = new Vector3(moveV, moveH * -1, 0);    //move camera with WASD
@@ -130,5 +149,7 @@ public class CameraController : MonoBehaviour
         Camera.main.transform.rotation = camStartR;
         rotateLeft = false;
         rotateRight = false;
+        rotate = false;
+        scoreChange = score;
     }
 }

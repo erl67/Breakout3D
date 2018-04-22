@@ -8,8 +8,6 @@ public class GameController : MonoBehaviour
 {
     public static GameController instance;
     public bool gameOver;
-    public bool spawn = true, spawnBall = false;
-    //private AudioSource background;
 
     private float volume, timer, timer2;
     public Text txtScore, txtLives, txtCenter, txtHelp;
@@ -39,29 +37,10 @@ public class GameController : MonoBehaviour
         StartCoroutine(StartBox());
         Time.timeScale = 0;
         txtCenter.text = "Press any Key to Begin";
-        BeginGame();
 
 		txtScore.text = "Score: " + score;
 		txtLives.text = "Lives: " + lives;
 
-        switch (SceneManager.GetActiveScene().buildIndex)
-        {
-            case 0:
-                timer = Time.time + 15;
-                break;
-            case 1:
-                timer = Time.time + 15;
-                timer2 = Time.time + 30;
-                break;
-            default:
-                break;
-        }
-
-        BeginGame();
-    }
-
-    private void BeginGame()
-    {
     }
 
     public IEnumerator StartBox()
@@ -138,7 +117,6 @@ public class GameController : MonoBehaviour
         {
             volume = Time.timeScale == 1 ? AudioListener.volume : volume;
             Time.timeScale = Time.timeScale == 1 ? 0 : 1;
-            spawn = spawn == true ? false : true;
             AudioListener.volume = Time.timeScale == 0 ? 0f : volume;
         }
 
@@ -169,38 +147,11 @@ public class GameController : MonoBehaviour
             GameObject.Find("Player").GetComponent<SphereCollider>().enabled = false;
         }
 
-
-        if (timer < Time.time)
-        {
-            timer = Time.time + Random.Range(1f, 3f);
-            spawnBall = true;
-        }
-
-        if (timer2 < Time.time)
-        {
-            timer2 = Time.time + Random.Range(5f, 10f);
-        }
-
-        if (spawnBall)
-        {
-            Debug.Log("Spawning ball");
-            spawnBall = false;
-        }
-
-    }
-
-    public void MuteBG()
-    {
-        //background.mute = true;
     }
 
     public void PlayerDead()
     {
         //StopAllCoroutines();
-
-        MuteBG();
-        spawn = false;
         gameOver = true;
     }
-
 }

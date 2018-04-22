@@ -34,12 +34,31 @@ public class BoardMaker : MonoBehaviour {
                 colorMod = 1;
                 break;
             case 1:
-                scaleMod = .7f;
-                colorMod = .7f;
+                rows = Mathf.Abs(yStart * 2);
+                cols = Mathf.Abs(xStart * 2);
+                blockColor = new Color(.25f, .25f, .25f);
+                xMod = 3;
+                yMod = 2;
+                scaleMod = .9f;
+                colorMod = .5f;
                 break;
             case 2:
+                rows = Mathf.Abs(yStart * 2);
+                cols = Mathf.Abs(xStart * 2);
+                blockColor = new Color(.5f, .5f, .5f);
+                xMod = 3;
+                yMod = 2;
+                scaleMod = .7f;
+                colorMod = .1f;
                 break;
             default:
+                rows = Mathf.Abs(yStart * 2);
+                cols = Mathf.Abs(xStart * 2);
+                blockColor = new Color(0f, 0f, 0f);
+                xMod = 3;
+                yMod = 2;
+                scaleMod = Random.Range(.2f, 1.2f);
+                colorMod = Random.Range(0f, 1f);
                 break;
         }
 
