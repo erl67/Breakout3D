@@ -44,11 +44,9 @@ R – reset
 
 1,2,3,4 - select level
 
+0 - restart current level
+
 H - easy mode, ball never loses
-
-### Sound:
-
-K/M – Volume up/down
 
 ### Lighting: 
 
