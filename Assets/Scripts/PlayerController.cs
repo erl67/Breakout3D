@@ -11,7 +11,7 @@ using UnityEngine.UI;
 	private GameController Controller;
 
     private int life;
-	private int ballRemaining = 2;
+	private int ballRemaining;
     private float timer = 1f;
     private float moveH, moveV, moveSpeed;
     private float playerScale;
@@ -24,21 +24,25 @@ using UnityEngine.UI;
     {
         switch (SceneManager.GetActiveScene().buildIndex)
         {
-            case 0:
-                moveSpeed = 1500f;
-                playerScale = 3f;
+			case 0:
+				moveSpeed = 1500f;
+				playerScale = 3f;
+				ballRemaining = 1;
                 break;
             case 1:
                 moveSpeed = 1200f;
-                playerScale = 2.7f;
+                playerScale = 3f;
+				ballRemaining = 2;
                 break;
             case 2:
                 moveSpeed = 1500f;
-                playerScale = 2.5f;
+                playerScale = 3f;
+				ballRemaining = 4;
                 break;
             default:
                 moveSpeed = Random.Range(800f, 2000f); ;
                 playerScale = Random.Range(1.5f, 4f);
+				ballRemaining = 1;
                 break;
         }
         rb = gameObject.GetComponent<Rigidbody>();
@@ -90,7 +94,7 @@ using UnityEngine.UI;
 
         if (transform.position.x > 30f) transform.position = new Vector3(30f, transform.position.y, 0f);
 		if (transform.position.x < -30f) transform.position = new Vector3(-30f, transform.position.y, 0f);
-        //!!This is for restrict the posistion of the player, because the panel will eventually move out of the playing area under extream circumanstance.
+        //!!This is for restrict the posistion of the player, because the panel will occasionally move out of the playing area under extream circumanstance.
         //If the scale of the panel changes, these two lines need to be fixed also.
     }
 
@@ -121,7 +125,7 @@ using UnityEngine.UI;
 		{
 			int points = (int)other.gameObject.GetComponent<Rigidbody> ().mass;
 			Controller.AddScore(points);
-			//coin.Play ();
+			coin.Play ();
 		}
 	}
 
@@ -146,7 +150,13 @@ using UnityEngine.UI;
             Controller.SetCenter("\nYou dropped the ball.\nPress(r or space) to continue");
             NewLife();
         }
-		ballRemaining = 2;
+		if (SceneManager.GetActiveScene ().buildIndex == 0) {
+			ballRemaining = 1;
+		} else if (SceneManager.GetActiveScene ().buildIndex == 1) {
+			ballRemaining = 2;
+		} else if (SceneManager.GetActiveScene ().buildIndex == 2) {
+			ballRemaining = 4;
+		}
     }
 
     public void NewLife()
