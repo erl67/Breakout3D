@@ -9,12 +9,11 @@ public class GameController : MonoBehaviour
     public static GameController instance;
     public bool gameOver;
 
-    private float volume, timer, timer2;
     public Text txtScore, txtLives, txtCenter, txtHelp;
 
     public static int score = 0, lives = 5;
-
     private int blocksRemaing = 100;
+    private float volume;
 
     private void Awake()
     {
@@ -37,9 +36,8 @@ public class GameController : MonoBehaviour
         Time.timeScale = 0;
         txtCenter.text = "Press any Key to Begin";
 
-		txtScore.text = "Score: " + score;
-		txtLives.text = "Lives: " + lives;
-
+        txtScore.text = "Score: " + score;
+        txtLives.text = "Lives: " + lives;
     }
 
     public IEnumerator StartBox()
@@ -54,11 +52,11 @@ public class GameController : MonoBehaviour
         GameObject.Find("Player").transform.position = new Vector3(0f, 0f, 0f);
     }
 
-	public void AddScore(int delta)
-	{
-		score += delta;
-		txtScore.text = "Score: " + score;
-	}
+    public void AddScore(int delta)
+    {
+        score += delta;
+        txtScore.text = "Score: " + score;
+    }
 
     public int GetScore()
     {
@@ -84,7 +82,6 @@ public class GameController : MonoBehaviour
     void Update()
     {
         blocksRemaing = GameObject.FindGameObjectsWithTag("block").Length; //on next level
-        //foreach (GameObject block in blocks) Destroy(block);
 
         if (GameController.instance.gameOver)
         {
@@ -93,12 +90,12 @@ public class GameController : MonoBehaviour
 
         if (gameOver && Input.GetKeyDown(KeyCode.R))
         {
-			lives = 5;
-			score = 0;
-            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            SceneManager.LoadScene(0);
-            GameObject.Find("OverheadLight").gameObject.GetComponent<Light>().enabled = false;
+            lives = 5;
+            score = 0;
+
+            GameObject.Find("OverheadLight").gameObject.GetComponent<Light>().enabled = true;
             GameObject.Find("Spotlight").gameObject.GetComponent<Light>().enabled = true;
+            SceneManager.LoadScene(0);
         }
 
         if (blocksRemaing < 10 && Input.GetKeyDown(KeyCode.N))
@@ -110,7 +107,7 @@ public class GameController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q) || (Input.GetKeyDown(KeyCode.LeftControl) && (Input.GetKeyDown(KeyCode.C))))
         {
             PlayerDead();
-            UnityEditor.EditorApplication.isPlaying = false;  //hide for build
+            //UnityEditor.EditorApplication.isPlaying = false;  //hide for build
             Application.Quit();
         }
 
@@ -140,7 +137,6 @@ public class GameController : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            //Time.timeScale = 1;
         }
 
         if (Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.H))

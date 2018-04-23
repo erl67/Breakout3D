@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour
 {
     private GameController Controller;
     public GameObject player;
+    private Rigidbody playerRB;
     private Vector3 offset;
 
     private float x, y, moveH, moveV;
@@ -19,13 +20,11 @@ public class CameraController : MonoBehaviour
 
     public Light overhead, spotlight;
 
-    //private Rigidbody player;
-    private Rigidbody ball;
-
     private bool rotate = true, rotateLeft = false;
     private bool rotateRight = false;
     private int score = 0;
     private int scoreChange = 0;
+    private float timer = 5f;
 
     void Start()
     {
@@ -35,10 +34,9 @@ public class CameraController : MonoBehaviour
         spotlight.enabled = true;
         overhead.enabled = false;
 
-        //player = GameObject.Find("Player").gameObject.GetComponent<Rigidbody>();
-
-        offset = transform.position - player.transform.position;
-        Debug.Log("Camera: " + transform.position + "  Player: " + player.transform.position);
+        //playerRB = GameObject.Find("Player").gameObject.GetComponent<Rigidbody>();
+        //offset = transform.position - player.transform.position;
+        //Debug.Log("Camera: " + transform.position + "  Player: " + player.transform.position);
 
         fov = Camera.main.fieldOfView;
         camStartP = Camera.main.transform.position * 1.1f;
@@ -52,10 +50,10 @@ public class CameraController : MonoBehaviour
         moveV = Input.GetAxis("Vertical");
         score = Controller.GetScore();
 
-		if (Input.GetKeyDown(KeyCode.R))
-		{
-			ResetCamera();
-		}
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetCamera();
+        }
 
         if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.Space))
         {
@@ -73,22 +71,23 @@ public class CameraController : MonoBehaviour
             rotateLeft = false;
         }
 
-        else if (score != 0 && false) //stop spinning to test paddle
+        else if (score != 0)  //&&false stop spinning to test paddle
         {
-            if (rotate)
+            if (rotate && timer < Time.time)
             {
-                if (score % 10 == 0)
+                if (score % 20 == 0)
                 {
                     rotate = true;
                     rotateLeft = true;
                     rotateRight = false;
                 }
-                else if (score % 20 == 0)
+                else if (score % 10 == 0)
                 {
                     rotate = true;
                     rotateLeft = false;
                     rotateRight = true;
                 }
+                timer = Time.time + 2f;
             }
             else
             {
@@ -99,7 +98,6 @@ public class CameraController : MonoBehaviour
                 }
             }
         }
-
 
         if (Input.GetKeyDown(KeyCode.L))
         {
@@ -131,7 +129,7 @@ public class CameraController : MonoBehaviour
         rotateValue = new Vector3(moveV, moveH * -1, 0);    //move camera with WASD
         transform.eulerAngles = transform.eulerAngles - rotateValue;
 
-        //uncomment for camera follow player
+        //uncomment for camera follow player & in start()
         //transform.position = player.transform.position + offset;
 
         fov += (Input.GetAxis("Mouse ScrollWheel") * -50f);
