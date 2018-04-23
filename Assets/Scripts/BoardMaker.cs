@@ -32,6 +32,49 @@ public class BoardMaker : MonoBehaviour {
                 yMod = 2;
                 scaleMod = 1f;
                 colorMod = 1;
+
+				for (int y = yStart; y <= rows / 2; y++) {
+					for (int x = xStart; x < cols / 2; x++) {
+						if (y % yMod == 0 && x % xMod == 0 &&(y==-10||y==10||y==-8||y==8)) {
+							var block = Instantiate (blockPrefab) as GameObject;
+							block.transform.position = (transform.position + new Vector3 (x, y, 0f));
+							block.transform.localScale = new Vector3 (scaleMod, scaleMod, 1f);
+							block.GetComponent<Rigidbody> ().mass = System.Math.Abs (rows + y); //points
+
+							var mr = block.GetComponent<Renderer> ();
+
+							var g = colorMod - (float)y / (float)rows;
+							var r = colorMod - (float)x / (float)cols;
+
+							g = Mathf.Abs (g);
+							r = Mathf.Abs (r);
+
+							blockColor = new Color (r, g, 0f);
+							mr.material.color = blockColor;
+
+							mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+						}
+						if (y % yMod == 0 && x % xMod == 0 &&(x==-30||x==30||x==-27||x==27)) {
+							var block = Instantiate (blockPrefab) as GameObject;
+							block.transform.position = (transform.position + new Vector3 (x, y, 0f));
+							block.transform.localScale = new Vector3 (scaleMod, scaleMod, 1f);
+							block.GetComponent<Rigidbody> ().mass = System.Math.Abs (rows + y); //points
+
+							var mr = block.GetComponent<Renderer> ();
+
+							var g = colorMod - (float)y / (float)rows;
+							var r = colorMod - (float)x / (float)cols;
+
+							g = Mathf.Abs (g);
+							r = Mathf.Abs (r);
+
+							blockColor = new Color (r, g, 0f);
+							mr.material.color = blockColor;
+
+							mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+						}
+					}
+				}
                 break;
             case 1:
                 rows = Mathf.Abs(yStart * 2);
@@ -41,16 +84,105 @@ public class BoardMaker : MonoBehaviour {
                 yMod = 2;
                 scaleMod = .9f;
                 colorMod = .5f;
+
+				for (int y = yStart; y <= rows / 2; y++) {
+					for (int x = xStart; x < cols / 2; x++) {
+					if (y > 5 || Mathf.Abs(x)<=5)
+						continue;
+						if (y % yMod == 0 && x % xMod == 0) {
+							var block = Instantiate (blockPrefab) as GameObject;
+							block.transform.position = (transform.position + new Vector3 (x, y, 0f));
+							block.transform.localScale = new Vector3 (scaleMod, scaleMod, 1f);
+							block.GetComponent<Rigidbody> ().mass = System.Math.Abs (rows + y); //points
+
+							var mr = block.GetComponent<Renderer> ();
+
+							var g = colorMod - (float)y / (float)rows;
+							var r = colorMod - (float)x / (float)cols;
+
+							g = Mathf.Abs (g);
+							r = Mathf.Abs (r);
+
+							blockColor = new Color (r, g, 0f);
+							mr.material.color = blockColor;
+
+							//mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+						}
+					}
+				}
                 break;
-            case 2:
-                rows = Mathf.Abs(yStart * 2);
-                cols = Mathf.Abs(xStart * 2);
-                blockColor = new Color(.5f, .5f, .5f);
-                xMod = 3;
-                yMod = 2;
-                scaleMod = .7f;
-                colorMod = .1f;
+
+		case 2:
+			rows = Mathf.Abs (yStart * 2);
+			cols = Mathf.Abs (xStart * 2);
+			blockColor = new Color (.5f, .5f, .5f);
+			xMod = 3;
+			yMod = 2;
+			scaleMod = 1f;
+			colorMod = .1f;
+				int restrict = 1, current = 0; 
+				for (int y = yStart; y <= rows / 2; y++) {
+					for (int x = xStart; x < cols / 2; x++) {
+						if (y % yMod == 0 && x % xMod == 0) {
+							var block = Instantiate (blockPrefab) as GameObject;
+							block.transform.position = (transform.position + new Vector3 (x, y, 0f));
+							block.transform.localScale = new Vector3 (scaleMod, scaleMod, 1f);
+							block.GetComponent<Rigidbody> ().mass = System.Math.Abs (rows + y); //points
+
+							var mr = block.GetComponent<Renderer> ();
+
+							var g = colorMod - (float)y / (float)rows;
+							var r = colorMod - (float)x / (float)cols;
+
+							g = Mathf.Abs (g);
+							r = Mathf.Abs (r);
+
+							blockColor = new Color (r, g, 0f);
+							mr.material.color = blockColor;
+							current++;
+							if (current == restrict) {
+								current = 0;
+								restrict++;
+								break;
+							}
+							mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+						}
+					}
+				}
+				restrict = 1; 
+				current =0; 
+				for (int y = -yStart; y >= -rows / 2; y--) 
+				{
+					for (int x = -xStart; x > -cols / 2; x--) {
+					
+						if (y % yMod == 0 && x % xMod == 0) {
+							var block = Instantiate (blockPrefab) as GameObject;
+							block.transform.position = (transform.position + new Vector3 (x, y, 0f));
+							block.transform.localScale = new Vector3 (scaleMod, scaleMod, 1f);
+							block.GetComponent<Rigidbody> ().mass = System.Math.Abs (rows + y); //points
+
+							var mr = block.GetComponent<Renderer> ();
+
+							var g = colorMod - (float)y / (float)rows;
+							var r = colorMod - (float)x / (float)cols;
+
+							g = Mathf.Abs (g);
+							r = Mathf.Abs (r);
+
+							blockColor = new Color (r, g, 0f);
+							mr.material.color = blockColor;
+							current++;
+							if (current == restrict) {
+								current = 0;
+								restrict++;
+								break;
+							}
+							mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+						}
+					}
+				}
                 break;
+
             default:
                 rows = Mathf.Abs(yStart * 2);
                 cols = Mathf.Abs(xStart * 2);
@@ -59,35 +191,31 @@ public class BoardMaker : MonoBehaviour {
                 yMod = 2;
                 scaleMod = Random.Range(.2f, 1.2f);
                 colorMod = Random.Range(0f, 1f);
+
+				for (int y = yStart; y <= rows / 2; y++) {
+					for (int x = xStart; x < cols / 2; x++) {
+						if (y % yMod == 0 && x % xMod == 0) {
+							var block = Instantiate (blockPrefab) as GameObject;
+							block.transform.position = (transform.position + new Vector3 (x, y, 0f));
+							block.transform.localScale = new Vector3 (scaleMod, scaleMod, 1f);
+							block.GetComponent<Rigidbody> ().mass = System.Math.Abs (rows + y); //points
+
+							var mr = block.GetComponent<Renderer> ();
+
+							var g = colorMod - (float)y / (float)rows;
+							var r = colorMod - (float)x / (float)cols;
+
+							g = Mathf.Abs (g);
+							r = Mathf.Abs (r);
+
+							blockColor = new Color (r, g, 0f);
+							mr.material.color = blockColor;
+
+							//mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+						}
+					}
+				}
                 break;
-        }
-
-        for (int y = yStart; y <= rows/2; y++)
-        {
-            for (int x = xStart; x < cols/2; x++)
-            {
-                if (y % yMod == 0  && x % xMod == 0)
-                {
-                    var block = Instantiate(blockPrefab) as GameObject;
-                    block.transform.position = (transform.position + new Vector3(x, y, 0f));
-                    block.transform.localScale = new Vector3(scaleMod, scaleMod, 1f);
-                    block.GetComponent<Rigidbody>().mass = System.Math.Abs(rows + y); //points
-
-                    var mr = block.GetComponent<Renderer>();
-
-                    var g = colorMod - (float)y / (float)rows;
-                    var r = colorMod - (float)x / (float)cols;
-
-                    g = Mathf.Abs(g);
-                    r = Mathf.Abs(r);
-
-                    blockColor = new Color(r, g, 0f);
-                    mr.material.color = blockColor;
-
-                    //mr.material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-                }
-
-            }
         }
 
         //var blocks = GameObject.FindGameObjectsWithTag("block");

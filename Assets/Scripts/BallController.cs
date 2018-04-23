@@ -13,8 +13,11 @@ public class BallController : MonoBehaviour {
 	private float constantSpeed = 30f;
 	private GameController Controller;
 
+	private int levelFlag;
+
     public AudioSource blockHit;
 	public AudioSource blockDied;
+	public AudioSource coin;
 	public AudioSource bounce;//I changed the bounce sound effect here, which will make the structure easier --Yanbo
 
     private float ballScale, playerForce, playerRotation, blockForce, blockRotation;
@@ -27,33 +30,37 @@ public class BallController : MonoBehaviour {
     void Start () {
         switch (SceneManager.GetActiveScene().buildIndex)
         {
-            case 0:
-                ballScale = 3f;
-                playerForce = 3f;
-                playerRotation = 1f;
-                blockForce = 50f;
-                blockRotation = 10f;
+			case 0:
+				ballScale = 3f;
+				playerForce = 3f;
+				playerRotation = 1f;
+				blockForce = 50f;
+				blockRotation = 10f;
+				levelFlag = 0;
                 break;
-            case 1:
-                ballScale = 2.9f;
-                playerForce = 3f;
-                playerRotation = 1f;
-                blockForce = 50f;
-                blockRotation = 10f;
+			case 1:
+				ballScale = 3f;
+				playerForce = 3f;
+				playerRotation = 1f;
+				blockForce = 50f;
+				blockRotation = 10f;
+				levelFlag = 1;
                 break;
-            case 2:
-                ballScale = 3f;
-                playerForce = 3f;
-                playerRotation = 1f;
-                blockForce = 50f;
-                blockRotation = 10f;
+			case 2:
+				ballScale = 3f;
+				playerForce = 3f;
+				playerRotation = 1f;
+				blockForce = 50f;
+				blockRotation = 10f;
+				levelFlag = 2;
                 break;
-            default:
-                ballScale = 3f;
-                playerForce = 3f;
-                playerRotation = 1f;
-                blockForce = 50f;
-                blockRotation = 10f;
+			default:
+				ballScale = 3f;
+				playerForce = 3f;
+				playerRotation = 1f;
+				blockForce = 50f;
+				blockRotation = 10f;
+				levelFlag = 3;
                 break;
         }
 
@@ -90,6 +97,7 @@ public class BallController : MonoBehaviour {
 
     private void OnCollisionEnter(Collision other)
     {
+		
 		if (other.gameObject.tag.Equals("block"))
 		{ 
 			//int points = (int) other.gameObject.GetComponent<Rigidbody>().mass;
@@ -101,6 +109,13 @@ public class BallController : MonoBehaviour {
             {
                 mr.material.color *= other.gameObject.GetComponent<Renderer>().material.color;
             }
+
+			if (levelFlag == 0) 
+			{
+				var score = (int)other.gameObject.GetComponent<Rigidbody>().mass;
+				Controller.AddScore (score);
+				coin.Play ();
+			}
 
             //rb.velocity *= .9f;
             //rb.angularVelocity = rb.angularVelocity * Random.Range(-1 * blockRotation, blockRotation);
@@ -137,7 +152,8 @@ public class BallController : MonoBehaviour {
 
     private void BallDies()
     {
-        GameController.lives--;
+        //GameController.lives--;
         Destroy(gameObject);
+		Controller.SetLives (-1);
     }
 }

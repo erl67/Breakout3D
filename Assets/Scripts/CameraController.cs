@@ -52,6 +52,11 @@ public class CameraController : MonoBehaviour
         moveV = Input.GetAxis("Vertical");
         score = Controller.GetScore();
 
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			ResetCamera();
+		}
+
         if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.Space))
         {
             ResetCamera();
@@ -72,13 +77,13 @@ public class CameraController : MonoBehaviour
         {
             if (rotate)
             {
-                if (score % 20 == 0)
+                if (score % 10 == 0)
                 {
                     rotate = true;
                     rotateLeft = true;
                     rotateRight = false;
                 }
-                else if (score % 10 == 0)
+                else if (score % 20 == 0)
                 {
                     rotate = true;
                     rotateLeft = false;

@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour
     private float volume, timer, timer2;
     public Text txtScore, txtLives, txtCenter, txtHelp;
 
-    public static int score = 0, lives = 3;
+    public static int score = 0, lives = 5;
 
     private int blocksRemaing = 100;
 
@@ -31,7 +31,6 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-		lives = 3;
         AudioListener.volume = .2f;
 
         StartCoroutine(StartBox());
@@ -94,6 +93,8 @@ public class GameController : MonoBehaviour
 
         if (gameOver && Input.GetKeyDown(KeyCode.R))
         {
+			lives = 5;
+			score = 0;
             //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             SceneManager.LoadScene(0);
             GameObject.Find("OverheadLight").gameObject.GetComponent<Light>().enabled = false;
