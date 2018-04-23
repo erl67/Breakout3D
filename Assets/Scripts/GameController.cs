@@ -12,8 +12,8 @@ public class GameController : MonoBehaviour
     public Text txtScore, txtLives, txtCenter, txtHelp;
 
     public static int score = 0, lives = 5;
-    private int blocksRemaing = 100;
-    private float volume;
+    private int blocksRemaining = 999;
+    private float timer = 3f,  volume;
 
     private void Awake()
     {
@@ -32,10 +32,10 @@ public class GameController : MonoBehaviour
     {
         AudioListener.volume = .2f;
 
+        timer = Time.time + 5f;
         StartCoroutine(StartBox());
-        Time.timeScale = 0;
-        txtCenter.text = "Press any Key to Begin";
 
+        txtCenter.text = "Press any Key to Begin";
         txtScore.text = "Score: " + score;
         txtLives.text = "Lives: " + lives;
     }
@@ -44,6 +44,7 @@ public class GameController : MonoBehaviour
     {
         while (!Input.anyKey)
         {
+            if (timer < Time.time) break;
             yield return null;
         }
         txtHelp.text = "";
@@ -81,7 +82,7 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        blocksRemaing = GameObject.FindGameObjectsWithTag("block").Length; //on next level
+        blocksRemaining = GameObject.FindGameObjectsWithTag("block").Length; //on next level
 
         if (GameController.instance.gameOver)
         {
@@ -98,9 +99,11 @@ public class GameController : MonoBehaviour
             SceneManager.LoadScene(0);
         }
 
-        if (blocksRemaing < 10 && Input.GetKeyDown(KeyCode.N))
+        if (blocksRemaining < 10 && Input.anyKey)
         {
-            //PlayerDead();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        } else if (blocksRemaining <1)
+        {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
 
@@ -148,7 +151,8 @@ public class GameController : MonoBehaviour
 
     public void PlayerDead()
     {
-        //StopAllCoroutines();
+        StopAllCoroutines();
+        //timer = Time.time + 7f;
         gameOver = true;
     }
 }

@@ -82,12 +82,12 @@ void setup() {
     //Serial.println("Testing device connections...");
     //Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
 
-    accelgyro.setXAccelOffset(-3828);
-    accelgyro.setYAccelOffset(890);
-    accelgyro.setZAccelOffset(1576);
-    accelgyro.setXGyroOffset(117);
-    accelgyro.setYGyroOffset(-49);
-    accelgyro.setZGyroOffset(52);
+    accelgyro.setXAccelOffset(-3544);
+    accelgyro.setYAccelOffset(832);
+    accelgyro.setZAccelOffset(1541);
+    accelgyro.setXGyroOffset(119);
+    accelgyro.setYGyroOffset(-51);
+    accelgyro.setZGyroOffset(51);
 
     /* 
       From calibration sketch
@@ -95,8 +95,8 @@ void setup() {
       Your offsets: -4007 1014  1633  117 -49 51
       Your offsets:  -3987 1002  1626  118 -49 51
       Your offsets:  -3828 890 1576  117 -49 52
-
-    
+      Your offsets:  -3544 763 1518  119 -51 51
+      Your offsets:  -3520 832 1541  119 -51 51  
     
     Serial.println("Updating internal sensor offsets...");
     Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t"); // 562
@@ -120,27 +120,27 @@ void setup() {
 }
 
 void loop() {
-    delay(100); //slow things down
+    delay(50); //slow things down
 
     // x & y swapped for game, check chip to confirm
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz); //read sensor
 
-    #define RAW_XY
+    //#define RAW_XY
 
     #ifdef MAPPED_XY 
         #ifdef RAW_XY
           //delay(100);
           Serial.print("\nraw:\t");
           Serial.print(-1 * ay); Serial.print("\t");
-          Serial.print(ax); Serial.print("\t");
+          Serial.print(-1 * ax); Serial.print("\t");
           Serial.print(-1 * gx); Serial.print("\t");
           Serial.println(gy);
         #endif
         
         Serial.print("a/g:\t");
-        Serial.print(-1* map(ay,-32000,32000,-100,100)); Serial.print("\t");
-        Serial.print(map(ax,-32000,32000,-100,100)); Serial.print("\t");
-        Serial.print(- 1* map(gx,-32000,32000,-100,100)); Serial.print("\t");
+        Serial.print(-1 * map(ay,-32000,32000,-100,100)); Serial.print("\t");
+        Serial.print(- 1* map(ax,-32000,32000,-100,100)); Serial.print("\t");
+        Serial.print(- 1 * map(gx,-32000,32000,-100,100)); Serial.print("\t");
         Serial.println(map(gy,-32000,32000,-100,100));
     #endif
     
