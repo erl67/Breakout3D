@@ -15,11 +15,11 @@ Position controller as desired, hit any key to begin
 
 ### Controller:
 
-Move or Tilt - Left/Right - Move
+Move or Tilt - Move
 
 Tilt Up - Launch Ball (with 20s delay between launches, 2 ball max in play)
 
-Tilt Down - Reset Camera
+Tilt Down - Reset Camera / New Life
 
 Shift Key - Toggle between Accelerometer/Gyro mode
    (paddle is larger in acclerometer mode)
@@ -72,6 +72,12 @@ https://github.com/jrowberg/i2cdevlib
 https://funnyvale.com/connecting-mpu6050-gyroscope-accelerometer-to-arduino/
 
 https://www.alanzucconi.com/2015/10/07/how-to-integrate-arduino-with-unity/
+
+http://42bots.com/tutorials/arduino-script-for-mpu-6050-auto-calibration/
+
+https://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-offsett/
+
+http://wired.chillibasket.com/2015/01/calibrating-mpu6050/
 
 
 #### Controller Components

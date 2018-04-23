@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(1);
 
-        while (!(Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Space)))
+        while (!Input.anyKey)
         {
             yield return null;
         }
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Controller.SetCenter("\nYou dropped the ball.\nPress ( R ) to continue");
+            Controller.SetCenter("\nYou dropped the ball.\nPress ( AnyKey ) to continue");
             NewLife();
         }
         if (SceneManager.GetActiveScene().buildIndex == 0)
