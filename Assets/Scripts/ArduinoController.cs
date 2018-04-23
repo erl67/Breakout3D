@@ -21,88 +21,53 @@ public class ArduinoController : MonoBehaviour
 
     private CameraController view;
     private PlayerController paddle;
-
     private Rigidbody player;
     private Rigidbody ball;
+    private Vector3 force;
 
-    private Vector3 force, prevForce;
-    private int ax, ay, az;
-    private int gx, gy, gz;
-    private int axStart = 0, ayStart = 0;
-    private int gxStart = 0, gyStart = 0;
+    private int ax = 0 , ay = 0, gx = 0, gy = 0;
     private int moveX = 0, moveY = 0;
     private int turnX = 0, turnY = 0;
-    private int[] axA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    private int[] ayA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    private int[] gxA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    private int[] gyA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-    private int counter = 0;
-    protected int countMax = 9;  //first 10 readings to calibrate, adjusted downward after calibration
-    protected int readInterval = 0; //number of readings to wait before averaging for movement
-    protected int axThreshold = 30;
-    protected int gxThreshold = 30, gxThresholdNeg = -30;
-    protected int gyThreshold = 75, gyThresholdNeg = -100;
+    private int axThreshold = 30, gxThreshold = 30, gxThresholdNeg = -30;
+    private int gyThreshold = 75, gyThresholdNeg = -100;
 
     public float moveScale = 10f;
     public float moveGyroScale = 500f;
     public float powerScale = 10f;
+
+    //private int axStart = 0, ayStart = 0;
+    //private int gxStart = 0, gyStart = 0;
+    //private int[] axA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    //private int[] ayA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    //private int[] gxA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    //private int[] gyA = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    //private int counter = 0;
+    //protected int countMax = 9;  //first 10 readings to calibrate, adjusted downward after calibration
+    //protected int readInterval = 0; //number of readings to wait before averaging for movement
 
     void MovementData(string s)
     {
         s = s.Replace("a/g:\t", "");
         string[] arduinoData = s.Split('\t');
 
-        if (arduinoData.Length == 6)
+        if (arduinoData.Length == 4)    //6 if z
         {
-            ay = int.Parse(arduinoData[0]) / 100;   //swapped from the sketch
-            ax = -1 * int.Parse(arduinoData[1]) / 100;   //see x/y marked on chip
-            az = int.Parse(arduinoData[2]) / 100;
-            gx = -1 * int.Parse(arduinoData[3]) / 100;
-            gy = int.Parse(arduinoData[4]) / 100;
-            gz = int.Parse(arduinoData[5]) / 100;
-            //Debug.Log("ax:" + ax + " ay:" + ay + " az:" + az + " gx:" + gx + " gy:" + gy + " gz:" + gz);
+            ax = int.Parse(arduinoData[0]);   //inverted in sketch
+            ay = int.Parse(arduinoData[1]);   //see x/y marked on chip
+            gx = int.Parse(arduinoData[3]);
+            gy = int.Parse(arduinoData[4]);
 
-            axA[counter] = ax;
-            ayA[counter] = ay;
-            gxA[counter] = gx;
-            gyA[counter] = gy;
-            counter++;
-        }
-
-        if ((axStart == 0) && (ayStart == 0) && (counter == countMax)) //calibrate based on first 10 readings
-        {
-            countMax = readInterval + 1;
-            counter = 0;
-            axStart = (int)axA.Average();
-            ayStart = (int)ayA.Average();
-            gxStart = (int)gxA.Average();
-            gyStart = (int)gyA.Average();
-
-            Debug.Log("Calibration aX: " + axStart + " aY: " + ayStart + "\t gX: " + gxStart + " gY: " + gyStart);
-            Array.Resize<int>(ref axA, countMax);
-            Array.Resize<int>(ref ayA, countMax);
-            Array.Resize<int>(ref gxA, countMax);
-            Array.Resize<int>(ref gyA, countMax);
-        }
-        else if (counter == countMax)
-        {
-            moveX = (int)axA.Average() - axStart;
-            moveY = (int)ayA.Average() - ayStart;
-            turnX = (int)gxA.Average() - gxStart;
-            turnY = (int)gyA.Average() - gyStart;
-
-            player.velocity = Vector3.zero;
+            moveX = ax;
+            moveY = ay;
+            turnX = gx;
+            turnY = gy;
             Debug.Log("accl (x:" + moveX + ",  y:" + moveY + ")\t gyro (x: " + turnX + ",  y:" + turnY + ")");
         }
         else
         {
+            player.velocity = Vector3.zero;
             moveX = moveY = turnX = turnY = 0;
         }
-
-        counter = counter >= countMax ? 0 : counter;
-        //Debug.Log(counter + " cm" + countMax + " ri" + readInterval);
-
 
         if (gyroOnly)
         {
@@ -113,7 +78,6 @@ public class ArduinoController : MonoBehaviour
                 player.AddForce(force * 50f, ForceMode.VelocityChange);
 
                 Debug.Log("gyro force: " + force.ToString() + "\tvelocity: " + player.velocity);
-                //turnX = 0;
             }
         }
         else
@@ -121,15 +85,12 @@ public class ArduinoController : MonoBehaviour
             if (Mathf.Abs(moveX) > axThreshold)
             {
                 force = new Vector3(moveScale * moveX, 0f, 0f);
-
                 player.AddForce(force, ForceMode.VelocityChange);
-
                 Debug.Log("move force: " + force.ToString() + "\tvelocity: " + player.velocity);
-                //moveX = 0;
+
                 //UnityEditor.EditorApplication.isPlaying = false;
             }
         }
-
 
         if (turnY > gyThreshold && ballLoaded)   //resetCamera
         {
@@ -181,11 +142,9 @@ public class ArduinoController : MonoBehaviour
                     //Debug.Log("p: " + p);
                     port = p;
                 }
-
-                sp = new SerialPort(port, 38400, Parity.None, 8, StopBits.One);
+                sp = new SerialPort(port, 115200, Parity.None, 8, StopBits.One);
                 OpenConnection();
-                //WriteToArduino("PING");
-
+                WriteToArduino("PING");
                 StartCoroutine(AsynchronousReadFromArduino((string s) => MovementData(s), () => Debug.LogError("Error!"), 10000f));
             }
         }
@@ -301,3 +260,107 @@ public class ArduinoController : MonoBehaviour
     }
 
 }
+
+
+//prior to calibration sketch
+/*
+    void MovementData(string s)
+    {
+        s = s.Replace("a/g:\t", "");
+        string[] arduinoData = s.Split('\t');
+
+        if (arduinoData.Length == 4)    //6 if z
+        {
+            ay = int.Parse(arduinoData[0]);   //inverted in sketch
+            ax = int.Parse(arduinoData[1]);   //see x/y marked on chip
+            //az = int.Parse(arduinoData[2]) / 100;
+            gx = int.Parse(arduinoData[3]);
+            gy = int.Parse(arduinoData[4]);
+            //gz = int.Parse(arduinoData[5]) / 100; //z-axis mapped to 0 from arduino
+            //Debug.Log("ax:" + ax + " ay:" + ay + " az:" + az + " gx:" + gx + " gy:" + gy + " gz:" + gz);
+
+            axA[counter] = ax;
+            ayA[counter] = ay;
+            gxA[counter] = gx;
+            gyA[counter] = gy;
+            counter++;
+        }
+
+        if ((axStart == 0) && (ayStart == 0) && (counter == countMax)) //calibrate based on first 10 readings
+        {
+            countMax = readInterval + 1;
+            counter = 0;
+            axStart = (int)axA.Average();
+            ayStart = (int)ayA.Average();
+            gxStart = (int)gxA.Average();
+            gyStart = (int)gyA.Average();
+
+            Debug.Log("Calibration aX: " + axStart + " aY: " + ayStart + "\t gX: " + gxStart + " gY: " + gyStart);
+            Array.Resize<int>(ref axA, countMax);
+            Array.Resize<int>(ref ayA, countMax);
+            Array.Resize<int>(ref gxA, countMax);
+            Array.Resize<int>(ref gyA, countMax);
+            player.transform.localScale = player.transform.localScale * 2f;
+        }
+        else if (counter == countMax)
+        {
+            moveX = (int)axA.Average() - axStart;
+            moveY = (int)ayA.Average() - ayStart;
+            turnX = (int)gxA.Average() - gxStart;
+            turnY = (int)gyA.Average() - gyStart;
+
+            player.velocity = Vector3.zero;
+            Debug.Log("accl (x:" + moveX + ",  y:" + moveY + ")\t gyro (x: " + turnX + ",  y:" + turnY + ")");
+        }
+        else
+        {
+            moveX = moveY = turnX = turnY = 0;
+        }
+
+        counter = counter >= countMax ? 0 : counter;
+        //Debug.Log(counter + " cm" + countMax + " ri" + readInterval);
+
+
+        if (gyroOnly)
+        {
+            if (Mathf.Abs(turnX) > gxThreshold)
+            {
+                force = turnX > 0 ? new Vector3(moveGyroScale, 0f, 0f) : new Vector3(-1 * moveGyroScale, 0f, 0f);
+
+                player.AddForce(force * 50f, ForceMode.VelocityChange);
+
+                Debug.Log("gyro force: " + force.ToString() + "\tvelocity: " + player.velocity);
+                //turnX = 0;
+            }
+        }
+        else
+        {
+            if (Mathf.Abs(moveX) > axThreshold)
+            {
+                force = new Vector3(moveScale * moveX, 0f, 0f);
+
+                player.AddForce(force, ForceMode.VelocityChange);
+
+                Debug.Log("move force: " + force.ToString() + "\tvelocity: " + player.velocity);
+                //moveX = 0;
+                //UnityEditor.EditorApplication.isPlaying = false;
+            }
+        }
+
+
+        if (turnY > gyThreshold && ballLoaded)   //resetCamera
+        {
+            paddle.LaunchBall();
+            //player.mass = (int)(100 + turnY);
+            ballLoaded = false;
+            turnY = 0;
+        }
+        else if (turnY < gyThresholdNeg)
+        {
+            view.ResetCamera();
+            turnY = 0;
+        }
+
+    } 
+ 
+ */

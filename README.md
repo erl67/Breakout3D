@@ -73,6 +73,10 @@ https://funnyvale.com/connecting-mpu6050-gyroscope-accelerometer-to-arduino/
 
 https://www.alanzucconi.com/2015/10/07/how-to-integrate-arduino-with-unity/
 
+http://42bots.com/tutorials/arduino-script-for-mpu-6050-auto-calibration/
+
+https://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-offsett/
+
 
 #### Controller Components
 
