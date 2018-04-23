@@ -26,20 +26,20 @@ public class PlayerController : MonoBehaviour
         switch (SceneManager.GetActiveScene().buildIndex)
         {
             case 0:
-                moveSpeed = 1500f;
+                moveSpeed = 1000f;
                 playerScale = 3f;
                 ballRemaining = 1;
                 avScale = -10f;
                 break;
             case 1:
-                moveSpeed = 1200f;
-                playerScale = 2.7f;
+                moveSpeed = 1000f;
+                playerScale = 3f;
                 ballRemaining = 2;
                 avScale = -10f;
                 break;
             case 2:
-                moveSpeed = 1500f;
-                playerScale = 2.5f;
+                moveSpeed = 1000f;
+                playerScale = 3f;
                 ballRemaining = 4;
                 avScale = -10f;
                 break;
@@ -98,7 +98,12 @@ public class PlayerController : MonoBehaviour
 
         //if (Mathf.Abs(transform.position.x) > newScale) transform.position = new Vector3(newScale, transform.position.y, 0f);
 
-        //if (Mathf.Abs(transform.position.x) > 30f) transform.position = new Vector3(30f, transform.position.y, 0f);
+		if (SceneManager.GetActiveScene ().buildIndex >= 0 && SceneManager.GetActiveScene ().buildIndex <= 2) {
+			if (transform.position.x > 30f)
+				transform.position = new Vector3 (30f, transform.position.y, 0f);
+			if (transform.position.x < -30f)
+				transform.position = new Vector3 (-30f, transform.position.y, 0f);
+		}
         //!!This is for restrict the posistion of the player, because the panel will occasionally move out of the playing area under extream circumanstance.
         //If the scale of the panel changes, these two lines need to be fixed also.
     }

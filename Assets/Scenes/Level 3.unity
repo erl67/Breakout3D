@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.63547504, g: 0.7037363, b: 0.78830093, a: 1}
+  m_IndirectSpecularColor: {r: 0.67886084, g: 0.7342792, b: 0.8056309, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 17548903}
   - component: {fileID: 17548902}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: MainCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -947,7 +947,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 8888814989a864a2dae01534cddfbe61, type: 2}
+  - {fileID: 2100000, guid: fe82a7b6e68114caf908b65c616c4222, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1247,7 +1247,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 8888814989a864a2dae01534cddfbe61, type: 2}
+  - {fileID: 2100000, guid: fe82a7b6e68114caf908b65c616c4222, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1450,7 +1450,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 8888814989a864a2dae01534cddfbe61, type: 2}
+  - {fileID: 2100000, guid: fe82a7b6e68114caf908b65c616c4222, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1893,10 +1893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c8a373286608e045a75a11f042754be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smooth: 2
-  moveScale: 10
-  moveGyroScale: 500
-  powerScale: 10
 --- !u!4 &1553733487
 Transform:
   m_ObjectHideFlags: 0
