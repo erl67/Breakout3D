@@ -53,7 +53,7 @@ MPU6050 accelgyro;
 //#define OUTPUT_READABLE_ACCELGYRO
 //#define OUTPUT_BINARY_ACCELGYRO
 #define MAPPED_XY
-#define RAW_XY
+//#define RAW_XY
 
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
@@ -75,18 +75,18 @@ void setup() {
     Serial.begin(115200);
 
     // initialize device
-    Serial.println("Initializing I2C devices...");
+    //Serial.println("Initializing I2C devices...");
     accelgyro.initialize();
     // verify connection
-    Serial.println("Testing device connections...");
-    Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
+    //Serial.println("Testing device connections...");
+    //Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
 
     /*
       From calibration sketch
       Sensor readings with offsets:  2 -1  16379 -1  0 0
       Your offsets: -4007 1014  1633  117 -49 51
       Your offsets:  -3987 1002  1626  118 -49 51
-    */
+    
     
     Serial.println("Updating internal sensor offsets...");
     Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t"); // 562
@@ -109,6 +109,7 @@ void setup() {
     Serial.print(accelgyro.getZGyroOffset()); Serial.print("\t");
     Serial.print("\n");
 
+*/
     // configure Arduino LED pin for output
     pinMode(LED_PIN, OUTPUT);
 }
@@ -122,16 +123,16 @@ void loop() {
         #ifdef RAW_XY
           Serial.print("raw:\t");
           Serial.print(ay); Serial.print("\t");
-          Serial.print(-1 * ax); Serial.print("\t");
+          Serial.print(ax); Serial.print("\t");
           Serial.print(gy); Serial.print("\t");
-          Serial.println(-1 * gx);
+          Serial.println(gx);
         #endif
         
         Serial.print("a/g:\t");
         Serial.print(map(ay,-10000,10000,-100,100)); Serial.print("\t");
-        Serial.print(-1 * map(ax,-10000,10000,-100,100)); Serial.print("\t");
-        Serial.print(map(gy,0,1023,-100,100)); Serial.print("\t");
-        Serial.println(-1 * map(gx,0,1023,-100,100));
+        Serial.print(map(ax,-10000,10000,-100,100)); Serial.print("\t");
+        Serial.print(map(gy,-30000,30000,-100,100)); Serial.print("\t");
+        Serial.println(map(gx,-30000,30000,-100,100));
     #endif
     
     // these methods (and a few others) are also available

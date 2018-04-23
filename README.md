@@ -77,6 +77,8 @@ http://42bots.com/tutorials/arduino-script-for-mpu-6050-auto-calibration/
 
 https://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-offsett/
 
+http://wired.chillibasket.com/2015/01/calibrating-mpu6050/
+
 
 #### Controller Components
 
