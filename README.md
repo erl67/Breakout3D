@@ -15,11 +15,11 @@ Position controller as desired, hit any key to begin
 
 ### Controller:
 
-Move or Tilt - Left/Right - Move
+Move or Tilt - Move
 
 Tilt Up - Launch Ball (with 20s delay between launches, 2 ball max in play)
 
-Tilt Down - Reset Camera
+Tilt Down - Reset Camera / New Life
 
 Shift Key - Toggle between Accelerometer/Gyro mode
    (paddle is larger in acclerometer mode)

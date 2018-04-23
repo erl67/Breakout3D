@@ -52,6 +52,7 @@ MPU6050 accelgyro;
 
 //#define OUTPUT_READABLE_ACCELGYRO
 //#define OUTPUT_BINARY_ACCELGYRO
+
 #define MAPPED_XY
 //#define RAW_XY
 
@@ -81,11 +82,20 @@ void setup() {
     //Serial.println("Testing device connections...");
     //Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
 
-    /*
+    accelgyro.setXAccelOffset(-3828);
+    accelgyro.setYAccelOffset(890);
+    accelgyro.setZAccelOffset(1576);
+    accelgyro.setXGyroOffset(117);
+    accelgyro.setYGyroOffset(-49);
+    accelgyro.setZGyroOffset(52);
+
+    /* 
       From calibration sketch
       Sensor readings with offsets:  2 -1  16379 -1  0 0
       Your offsets: -4007 1014  1633  117 -49 51
       Your offsets:  -3987 1002  1626  118 -49 51
+      Your offsets:  -3828 890 1576  117 -49 52
+
     
     
     Serial.println("Updating internal sensor offsets...");
@@ -95,12 +105,7 @@ void setup() {
     Serial.print(accelgyro.getXGyroOffset()); Serial.print("\t"); // 2200
     Serial.print(accelgyro.getYGyroOffset()); Serial.print("\t"); // 76
     Serial.println(accelgyro.getZGyroOffset());                    // -500
-    accelgyro.setXAccelOffset(-3987);
-    accelgyro.setYAccelOffset(1002);
-    accelgyro.setZAccelOffset(1626);
-    accelgyro.setXGyroOffset(118);
-    accelgyro.setYGyroOffset(-49);
-    accelgyro.setZGyroOffset(51);
+
     Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t");
     Serial.print(accelgyro.getYAccelOffset()); Serial.print("\t");
     Serial.print(accelgyro.getZAccelOffset()); Serial.print("\t");
@@ -115,24 +120,28 @@ void setup() {
 }
 
 void loop() {
-    delay(50); //slow things down
+    delay(100); //slow things down
 
+    // x & y swapped for game, check chip to confirm
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz); //read sensor
 
-    #ifdef MAPPED_XY   // x & y swapped for game, check chip to confirm
+    #define RAW_XY
+
+    #ifdef MAPPED_XY 
         #ifdef RAW_XY
-          Serial.print("raw:\t");
-          Serial.print(ay); Serial.print("\t");
+          //delay(100);
+          Serial.print("\nraw:\t");
+          Serial.print(-1 * ay); Serial.print("\t");
           Serial.print(ax); Serial.print("\t");
-          Serial.print(gy); Serial.print("\t");
-          Serial.println(gx);
+          Serial.print(-1 * gx); Serial.print("\t");
+          Serial.println(gy);
         #endif
         
         Serial.print("a/g:\t");
-        Serial.print(map(ay,-10000,10000,-100,100)); Serial.print("\t");
-        Serial.print(map(ax,-10000,10000,-100,100)); Serial.print("\t");
-        Serial.print(map(gy,-30000,30000,-100,100)); Serial.print("\t");
-        Serial.println(map(gx,-30000,30000,-100,100));
+        Serial.print(-1* map(ay,-32000,32000,-100,100)); Serial.print("\t");
+        Serial.print(map(ax,-32000,32000,-100,100)); Serial.print("\t");
+        Serial.print(- 1* map(gx,-32000,32000,-100,100)); Serial.print("\t");
+        Serial.println(map(gy,-32000,32000,-100,100));
     #endif
     
     // these methods (and a few others) are also available

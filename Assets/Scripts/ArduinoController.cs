@@ -16,7 +16,7 @@ public class ArduinoController : MonoBehaviour
     public float smooth = 2.0F;
     private Vector3 prevPosition;
 
-    private bool useController = true, gyroOnly = false, ballLoaded = true;
+    private bool useController = true, gyroOnly = true, ballLoaded = true;
     private float timer = 20f;
 
     private CameraController view;
@@ -29,12 +29,14 @@ public class ArduinoController : MonoBehaviour
     private int moveX = 0, moveY = 0;
     private int turnX = 0, turnY = 0;
 
-    private int axThreshold = 30, ayThreshold = 50; //move, not used
-    private int gxThreshold = 30; //move
-    private int gyThreshold = 75, gyThresholdNeg = -40; //laucnh ball, resetCamera
+    private int axThreshold = 30; //move
+    private int ayThreshold = 50; //unused
+    private int gxThreshold = 20; //move
+    private int gyThreshold = 75; //launch ball 
+    private int gyThresholdNeg = -20; //resetCamera/life
 
-    public float moveScale = 50f;
-    public float moveGyroScale = 500f;
+    public float moveAccScale = 200f;
+    public float moveGyroScale = 400f;
     public float powerScale = 10f;
 
     void MovementData(string s)
@@ -46,8 +48,8 @@ public class ArduinoController : MonoBehaviour
 
             if (arduinoData.Length == 4)
             {
-                moveX = int.Parse(arduinoData[0]);   //inverted in sketch
-                moveY = int.Parse(arduinoData[1]);   //see x/y marked on chip
+                moveX = int.Parse(arduinoData[0]);   //inverted, x/y swapped in sketch
+                moveY = int.Parse(arduinoData[1]);          
                 turnX = int.Parse(arduinoData[2]);
                 turnY = int.Parse(arduinoData[3]);
 
@@ -56,17 +58,15 @@ public class ArduinoController : MonoBehaviour
             else
             {
                 moveX = moveY = turnX = turnY = 0;
-                //player.velocity = Vector3.zero;
+                player.velocity = Vector3.zero;
             }
 
             if (gyroOnly)
             {
                 if (Mathf.Abs(turnX) > gxThreshold)
                 {
-                    force = turnX > 0 ? new Vector3(moveGyroScale, 0f, 0f) : new Vector3(-1 * moveGyroScale, 0f, 0f);
-
-                    player.AddForce(force * 50f, ForceMode.VelocityChange);
-
+                    force = new Vector3 (turnX, 0f, 0f) * moveGyroScale;
+                    player.AddForce(force, ForceMode.Impulse);
                     Debug.Log("gyro force: " + force.ToString() + "\tvelocity: " + player.velocity);
                 }
             }
@@ -74,11 +74,9 @@ public class ArduinoController : MonoBehaviour
             {
                 if (Mathf.Abs(moveX) > axThreshold)
                 {
-                    force = new Vector3(moveX * moveScale, 0f, 0f);
-                    player.AddForce(force, ForceMode.VelocityChange);
-                    Debug.Log("move force: " + force.ToString() + "\tvelocity: " + player.velocity);
-
-                    //UnityEditor.EditorApplication.isPlaying = false;
+                    force = new Vector3(moveX, 0f, 0f) * moveAccScale;
+                    player.AddForce(force, ForceMode.Impulse);
+                    Debug.Log("move force: " + force.ToString() + "\tvelocity: " + player.velocity);                    
                 }
             }
 
@@ -87,12 +85,16 @@ public class ArduinoController : MonoBehaviour
                 paddle.LaunchBall();
                 //player.mass = (int)(100 + turnY);
                 ballLoaded = false;
-                turnY = 0;
             }
             else if (turnY < gyThresholdNeg)
             {
                 view.ResetCamera();
-                turnY = 0;
+                if (Time.timeScale == 0)
+                {
+                    ballLoaded = true;
+                    Debug.Log("\tStarting new life");
+                    paddle.NewLife();
+                }
             }
         }
         //else Debug.Log("data-> " + data);            
@@ -103,7 +105,7 @@ public class ArduinoController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {
-            gyroOnly = gyroOnly == false ? true : false;
+            gyroOnly = !gyroOnly;
             player.transform.localScale = gyroOnly ? player.transform.localScale * .75f : player.transform.localScale * 1.25f;
             Debug.Log("changing mode  gyroOnly = " + gyroOnly);
         }
@@ -177,7 +179,7 @@ public class ArduinoController : MonoBehaviour
                     sp.Open();
                     sp.ReadTimeout = 50;  // sets timeout value before reporting error
                     Debug.Log("Port Opened: " + sp.PortName);
-                    player.transform.localScale = player.transform.localScale * 2f;
+                    player.transform.localScale = player.transform.localScale * 1.5f;
                 }
                 catch (Exception e)
                 {
