@@ -17,7 +17,7 @@ public class ArduinoController : MonoBehaviour
     private Vector3 prevPosition;
 
     private bool useController = true, gyroOnly = true, ballLoaded = true;
-    private float timer = 20f;
+    private float timer = 6f;
 
     private CameraController view;
     private PlayerController paddle;
@@ -82,9 +82,9 @@ public class ArduinoController : MonoBehaviour
 
             if (turnY > gyThreshold && ballLoaded)   //resetCamera
             {
+                ballLoaded = false;
                 paddle.LaunchBall();
                 //player.mass = (int)(100 + turnY);
-                ballLoaded = false;
             }
             else if (turnY < gyThresholdNeg)
             {
@@ -110,10 +110,10 @@ public class ArduinoController : MonoBehaviour
             Debug.Log("changing mode  gyroOnly = " + gyroOnly);
         }
 
-        if (GameObject.FindGameObjectsWithTag("ball").Length == 0 || (timer < Time.time && !ballLoaded))
+        if (!ballLoaded && (GameObject.FindGameObjectsWithTag("ball").Length == 0 || (timer < Time.time)))
         {
             ballLoaded = true;
-            timer = Time.time + 20f;
+            timer = Time.time + 4f;
         }
     }
 
@@ -251,7 +251,7 @@ public class ArduinoController : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        if (useController) sp.Close();
+        //if (useController) sp.Close();
     }
 
 }

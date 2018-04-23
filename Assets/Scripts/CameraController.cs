@@ -119,11 +119,11 @@ public class CameraController : MonoBehaviour
     {
         if (rotateLeft == true)
         {
-            transform.RotateAround(player.transform.position, Vector3.up, 3f * Time.deltaTime);
+            transform.RotateAround(player.transform.position, Vector3.up, Random.Range(2f,3f) * Time.deltaTime);
         }
         else if (rotateRight == true)
         {
-            transform.RotateAround(player.transform.position, Vector3.down, 3f * Time.deltaTime);
+            transform.RotateAround(player.transform.position, Vector3.down, Random.Range(2f, 3f) * Time.deltaTime);
         }
 
         rotateValue = new Vector3(moveV, moveH * -1, 0);    //move camera with WASD

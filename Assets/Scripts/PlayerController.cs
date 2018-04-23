@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 
     private int life;
     private int ballRemaining;
-    private float timer = 1f;
+    private float newScale, timer = 5f;
     private float moveH, moveV, moveSpeed;
     private float playerScale, avScale;
 
@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
 
     public Text txtScore, txtLives, txtCenter;
 
-    IEnumerator Start()
+    void Start()
     {
         switch (SceneManager.GetActiveScene().buildIndex)
         {
@@ -58,15 +58,18 @@ public class PlayerController : MonoBehaviour
 
         life = GameController.lives;
 
-        yield return new WaitForSecondsRealtime(2);
+        newScale = 30f - (playerScale / 3.0f);
+
+        //yield return new WaitForSecondsRealtime(2);
     }
 
     public IEnumerator StartBox()   //called from NewLife()
     {
-        yield return new WaitForSecondsRealtime(1);
+        //yield return new WaitForSecondsRealtime(1);
 
         while (!Input.anyKey)
         {
+            if (timer < Time.realtimeSinceStartup) break;
             yield return null;
         }
         Controller.SetCenter(" ");
@@ -93,10 +96,9 @@ public class PlayerController : MonoBehaviour
             LoseLife();
         }
 
-        //var newScale = playerScale / 3.0f;
+        //if (Mathf.Abs(transform.position.x) > newScale) transform.position = new Vector3(newScale, transform.position.y, 0f);
 
-        if (transform.position.x > 30f) transform.position = new Vector3(30f, transform.position.y, 0f);
-        if (transform.position.x < -30f) transform.position = new Vector3(-30f, transform.position.y, 0f);
+        //if (Mathf.Abs(transform.position.x) > 30f) transform.position = new Vector3(30f, transform.position.y, 0f);
         //!!This is for restrict the posistion of the player, because the panel will occasionally move out of the playing area under extream circumanstance.
         //If the scale of the panel changes, these two lines need to be fixed also.
     }
@@ -139,6 +141,11 @@ public class PlayerController : MonoBehaviour
             Controller.AddScore(points);
             coin.Play();
         }
+
+        if (other.gameObject.tag.Equals("left") || other.gameObject.tag.Equals("right"))
+        {
+            rb.velocity = Vector3.zero;
+        }
     }
 
     public void LoseLife()
@@ -178,6 +185,7 @@ public class PlayerController : MonoBehaviour
 
     public void NewLife()
     {
+        timer = Time.realtimeSinceStartup + 3f;
         StartCoroutine(StartBox());
     }
 }

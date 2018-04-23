@@ -9,20 +9,27 @@ An [Eric Laslo](https://github.com/erl67) and [Yanbo Wang](https://github.com/Ya
 
 Position controller as desired, hit any key to begin
 
+Balls Available per level - [1, 2, 4, 3]
+
+Board will rotate based on score
+
+Hit (N)
+
+
 ## Controls:
 
 ### Movement – Mouse to move
 
 ### Controller:
 
-Move or Tilt - Move
+Move or Tilt - Move Paddle
 
-Tilt Up - Launch Ball (with 20s delay between launches, 2 ball max in play)
+Tilt Up - Launch Ball (with 5s cooldown between launches)
 
 Tilt Down - Reset Camera / New Life
 
 Shift Key - Toggle between Accelerometer/Gyro mode
-   (paddle is larger in acclerometer mode)
+   (paddle is larger in accelerometer mode, game starts in gyro mode, accelerometer is unpredictable)
 
 
 ### Camera: 
