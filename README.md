@@ -26,6 +26,8 @@ Left Click - Launch ball
 
 Right Click - Reset Camera
 
+Middle Click - Self Destruct (useful if no balls remain)
+
 
 ### Controller:
 

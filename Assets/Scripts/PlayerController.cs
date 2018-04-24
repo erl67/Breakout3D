@@ -17,12 +17,13 @@ public class PlayerController : MonoBehaviour
     private float moveH, moveV, moveSpeed;
     private float playerScale, avScale;
 
-    public AudioSource loseLife, endSound, coin;
-
     public Text txtScore, txtLives, txtCenter;
+    public AudioSource loseLife, endSound, coin;
 
     void Start()
     {
+        Controller = (GameController)GameObject.Find("Main").GetComponent("GameController");
+
         switch (SceneManager.GetActiveScene().buildIndex)
         {
             case 0:
@@ -53,10 +54,6 @@ public class PlayerController : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody>();
         player = GameObject.Find("Player").gameObject;
         player.transform.localScale = new Vector3(playerScale, 1f, 1f);
-
-        Controller = (GameController)GameObject.Find("Main").GetComponent("GameController");
-
-        life = GameController.lives;
     }
 
     public IEnumerator StartBox()   //called from NewLife()
@@ -66,7 +63,7 @@ public class PlayerController : MonoBehaviour
             if (timer < Time.realtimeSinceStartup) break;
             yield return null;
         }
-        Controller.SetCenter(" ");
+        Controller.SetCenter("");
 
         Time.timeScale = 1;
         player.transform.position = new Vector3(0f, 0f, 0f);
@@ -74,21 +71,10 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && ballRemaining != 0)
-        {
-            LaunchBall();
-        }
-        if (life != GameController.lives)
-        {
-            life = GameController.lives;
-            LoseLife();
-        }
+        if (Input.GetMouseButtonDown(0) && ballRemaining > 0) LaunchBall();
 
-        if (Input.GetMouseButtonDown(2))
-        {
-            Controller.SetLives(-1);
-            LoseLife();
-        } else if (Input.GetKeyDown(KeyCode.BackQuote)) Controller.SetLives(1);
+        if (Input.GetMouseButtonDown(2) && GameController.lives > 0) Controller.SetLives(-1);
+        else if (Input.GetKeyDown(KeyCode.BackQuote)) Controller.SetLives(1);
 
         //restrict the posistion of the player, because the panel will occasionally move out of the playing area under extreme circumanstance.
         if (SceneManager.GetActiveScene ().buildIndex <= 2) {
@@ -108,15 +94,15 @@ public class PlayerController : MonoBehaviour
             Vector3 motion = new Vector3(mouseH * moveSpeed, 0f, 0f);
             var force = motion * moveSpeed;
             rb.AddForce(force);
-            Debug.Log("mouseH: " + mouseH + " force: " + motion + " v: " + rb.velocity);
-            if (!Input.GetKeyDown(KeyCode.F))
-                rb.velocity = Vector3.zero;
+            //Debug.Log("mouseH: " + mouseH + " motion: " + motion + " v: " + rb.velocity);
+
+            if (!Input.GetKeyDown(KeyCode.F)) rb.velocity = Vector3.zero;
         }
     }
 
     public void LaunchBall()
     {
-        if (GameObject.FindGameObjectsWithTag("ball").Length < 3)
+        if (GameObject.FindGameObjectsWithTag("ball").Length < 3 && Time.timeScale > 0)
         {
             var ball = Instantiate(ballPrefab) as GameObject;
             ball.transform.position = (transform.position + new Vector3(0f, Random.Range(3f, 3.5f), 0f));
@@ -145,37 +131,18 @@ public class PlayerController : MonoBehaviour
 
     public void LoseLife()
     {
-        int lives = GameController.lives;
+        loseLife.Play();
 
-        if (lives < 1)
-            endSound.Play();
-        else
-            loseLife.Play();
-
-        Time.timeScale = 0;
-
-        if (lives < 1)
+        if (SceneManager.GetActiveScene().buildIndex != 4)
         {
-            Controller.SetCenter("Game Over\nYour Final Score is: " + GameController.score.ToString() + "\n\nPress (r) to try again");
-            GameController.instance.PlayerDead();
-        }
-        else
-        {
+            Time.timeScale = 0;
             Controller.SetCenter("\nYou dropped the ball.\nPress ( AnyKey ) to continue");
             NewLife();
         }
-        if (SceneManager.GetActiveScene().buildIndex == 0)
-        {
-            ballRemaining = 1;
-        }
-        else if (SceneManager.GetActiveScene().buildIndex == 1)
-        {
-            ballRemaining = 2;
-        }
-        else if (SceneManager.GetActiveScene().buildIndex == 2)
-        {
-            ballRemaining = 4;
-        }
+
+        ballRemaining = SceneManager.GetActiveScene().buildIndex + 1;
+        if (SceneManager.GetActiveScene().buildIndex == 2) ballRemaining = 4;
+        if (SceneManager.GetActiveScene().buildIndex > 2) ballRemaining = 6;
     }
 
     public void NewLife()

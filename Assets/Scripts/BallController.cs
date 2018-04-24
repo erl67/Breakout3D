@@ -6,30 +6,28 @@ using UnityEngine.UI;
 
 public class BallController : MonoBehaviour
 {
+    private GameController Controller;
     private GameObject ball;
     private Rigidbody rb;
     private Vector3 force;
     private GameObject player;
     private Renderer mr;
-    private float constantSpeed = 30f;
-    private GameController Controller;
-
-    private int levelFlag;
+    private GameObject topWall, leftWall, rightWall;
+    private MeshRenderer otherMr;
 
     public AudioSource blockHit;
     public AudioSource blockDied;
     public AudioSource coin;
-    public AudioSource bounce;//I changed the bounce sound effect here, which will make the structure easier --Yanbo
-
+    public AudioSource bounce;
+ 
     private float ballScale, playerForce, playerRotation, blockForce, blockRotation;
-    private Vector3 oppositeForce;
-
-    GameObject topWall, leftWall, rightWall;
-    MeshRenderer otherMr;
-    int loopControl;
+    private float constantSpeed = 30f;
+    private int levelFlag, loopControl;
 
     void Start()
     {
+        Controller = (GameController)GameObject.Find("Main").GetComponent("GameController");
+
         switch (SceneManager.GetActiveScene().buildIndex)
         {
             case 0:
@@ -82,11 +80,9 @@ public class BallController : MonoBehaviour
         otherMr = topWall.GetComponent<MeshRenderer>();
 
         loopControl = 0;
-
-        Controller = (GameController)GameObject.Find("Main").GetComponent("GameController");
     }
 
-    void Update() //I commented the lines that restrict the ball from moving along z axis, but did the same thing in the Unity by checking "Freeze the position (z)"
+    void Update() 
     {
         rb.velocity = constantSpeed * (rb.velocity.normalized);
         if (loopControl == 15)
@@ -115,6 +111,19 @@ public class BallController : MonoBehaviour
                     mr.material.color *= other.gameObject.GetComponent<Renderer>().material.color;
                 else
                     mr.material.color = new Color(Random.Range(.8f,1f), Random.Range(.8f,1f), Random.Range(.8f,1f));
+            }
+
+            if (SceneManager.GetActiveScene().buildIndex == 4)
+            {
+                if (Random.Range(0, 2) == 0)
+                {
+                    ball.transform.localScale *= .9f;
+                    rb.angularVelocity = new Vector3(Random.Range(-20f, 20f), Random.Range(-100f, 100f), 0f);
+                }
+                else
+                {
+                    ball.transform.localScale *= 1.1f;
+                }
             }
 
             if (levelFlag == 0)

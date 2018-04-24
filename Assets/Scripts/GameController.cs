@@ -9,12 +9,14 @@ public class GameController : MonoBehaviour
     public static GameController instance;
     public bool gameOver;
     private CameraController view;
+    private PlayerController player;
 
     public Text txtScore, txtLives, txtCenter, txtHelp;
 
-    public static int score = 0, lives = 5;
     private int blocksRemaining = 999;
-    private float timer = 3f,  volume;
+    private float volume, timer;
+
+    public static int score = 0, lives = 5;
 
     private void Awake()
     {
@@ -32,25 +34,25 @@ public class GameController : MonoBehaviour
     void Start()
     {
         view = (CameraController)GameObject.Find("MainCamera").GetComponent("CameraController");
+        player = (PlayerController)GameObject.Find("Player").GetComponent("PlayerController");
 
         AudioListener.volume = .25f;
+        timer = Time.realtimeSinceStartup + 5f;
 
-        timer = Time.time + 5f;
-        StartCoroutine(StartBox());
-
+        txtHelp.text = "";
         txtCenter.text = "Press any Key to Begin";
         txtScore.text = "Score: " + score;
         txtLives.text = "Lives: " + lives;
+        StartCoroutine(StartBox());
     }
 
     public IEnumerator StartBox()
     {
         while (!Input.anyKey)
         {
-            if (timer < Time.time) break;
+            if (timer < Time.realtimeSinceStartup) break;
             yield return null;
         }
-        txtHelp.text = "";
         txtCenter.text = "";
         Time.timeScale = 1;
         GameObject.Find("Player").transform.position = new Vector3(0f, 0f, 0f);
@@ -70,9 +72,15 @@ public class GameController : MonoBehaviour
 
     public void SetLives(int delta)
     {
-        if (delta < 0) view.ResetCamera();
+        if (delta < 0 && SceneManager.GetActiveScene().buildIndex !=4) view.ResetCamera();
         lives += delta;
         txtLives.text = "Lives: " + lives;
+
+        if (lives <= 0) {
+            player.endSound.Play();
+            GameController.instance.PlayerDead();
+        }
+        else if (delta < 0) player.LoseLife();
     }
 
     public void SetCenter(string s)
@@ -87,18 +95,14 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        blocksRemaining = GameObject.FindGameObjectsWithTag("block").Length; //on next level
+        if (GameController.instance.gameOver) PlayerDead();
 
-        if (GameController.instance.gameOver)
-        {
-            PlayerDead();
-        }
+        blocksRemaining = GameObject.FindGameObjectsWithTag("block").Length; //on next level
 
         if (gameOver && Input.GetKeyDown(KeyCode.R))
         {
             lives = 5;
             score = 0;
-
             GameObject.Find("OverheadLight").gameObject.GetComponent<Light>().enabled = true;
             GameObject.Find("Spotlight").gameObject.GetComponent<Light>().enabled = true;
             SceneManager.LoadScene(0);
@@ -155,7 +159,9 @@ public class GameController : MonoBehaviour
 
     public void PlayerDead()
     {
-        StopAllCoroutines();
+        //StopAllCoroutines();
+        Time.timeScale = 0;
+        SetCenter("Game Over\nYour Final Score is: " + score.ToString() + "\n\nPress (r) to try again");
         gameOver = true;
     }
 }
