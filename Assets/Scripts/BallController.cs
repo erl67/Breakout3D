@@ -111,10 +111,10 @@ public class BallController : MonoBehaviour
             {
                 mr.material.mainTexture = null;
 
-                if (Random.Range(0, 2) == 0)
+                if (Random.Range(0, 9) > 1)
                     mr.material.color *= other.gameObject.GetComponent<Renderer>().material.color;
                 else
-                    mr.material.color -= other.gameObject.GetComponent<Renderer>().material.color;
+                    mr.material.color = new Color(Random.Range(.8f,1f), Random.Range(.8f,1f), Random.Range(.8f,1f));
             }
 
             if (levelFlag == 0)
@@ -123,10 +123,6 @@ public class BallController : MonoBehaviour
                 Controller.AddScore(score);
                 coin.Play();
             }
-
-            //rb.velocity *= .9f;
-            //rb.angularVelocity = rb.angularVelocity * Random.Range(-1 * blockRotation, blockRotation);
-            //Destroy(other.gameObject);
         }
 
         if (other.gameObject.tag.Equals("player"))
@@ -159,7 +155,6 @@ public class BallController : MonoBehaviour
 
     private void BallDies()
     {
-        //GameController.lives--;
         Destroy(gameObject);
         Controller.SetLives(-1);
     }

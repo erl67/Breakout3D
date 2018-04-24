@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 
     private int life;
     private int ballRemaining;
-    private float newScale, timer = 5f;
+    private float timer = 5f;
     private float moveH, moveV, moveSpeed;
     private float playerScale, avScale;
 
@@ -44,10 +44,10 @@ public class PlayerController : MonoBehaviour
                 avScale = -10f;
                 break;
             default:
-                moveSpeed = Random.Range(1500f, 2000f);
+                moveSpeed = Random.Range(1500f, 2500f);
                 playerScale = Random.Range(3f, 6f);
-                ballRemaining = 5;
-                avScale = -100f;
+                ballRemaining = Random.Range(6, 9);
+                avScale = -120f;
                 break;
         }
         rb = gameObject.GetComponent<Rigidbody>();
@@ -57,16 +57,10 @@ public class PlayerController : MonoBehaviour
         Controller = (GameController)GameObject.Find("Main").GetComponent("GameController");
 
         life = GameController.lives;
-
-        newScale = 30f - (playerScale / 3.0f);
-
-        //yield return new WaitForSecondsRealtime(2);
     }
 
     public IEnumerator StartBox()   //called from NewLife()
     {
-        //yield return new WaitForSecondsRealtime(1);
-
         while (!Input.anyKey)
         {
             if (timer < Time.realtimeSinceStartup) break;
@@ -90,28 +84,24 @@ public class PlayerController : MonoBehaviour
             LoseLife();
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(2))
         {
-            GameController.lives--;
+            Controller.SetLives(-1);
             LoseLife();
-        }
+        } else if (Input.GetKeyDown(KeyCode.BackQuote)) Controller.SetLives(1);
 
-        //if (Mathf.Abs(transform.position.x) > newScale) transform.position = new Vector3(newScale, transform.position.y, 0f);
-
-		if (SceneManager.GetActiveScene ().buildIndex >= 0 && SceneManager.GetActiveScene ().buildIndex <= 2) {
+        //restrict the posistion of the player, because the panel will occasionally move out of the playing area under extreme circumanstance.
+        if (SceneManager.GetActiveScene ().buildIndex <= 2) {
 			if (transform.position.x > 30f)
 				transform.position = new Vector3 (30f, transform.position.y, 0f);
 			if (transform.position.x < -30f)
 				transform.position = new Vector3 (-30f, transform.position.y, 0f);
 		}
-        //!!This is for restrict the posistion of the player, because the panel will occasionally move out of the playing area under extream circumanstance.
-        //If the scale of the panel changes, these two lines need to be fixed also.
     }
 
     void FixedUpdate()
     {
         float mouseH = Input.GetAxis("Mouse X");
-        //float mouseV = Input.GetAxis("Mouse Y");
 
         if (mouseH != 0f)
         {
@@ -129,7 +119,7 @@ public class PlayerController : MonoBehaviour
         if (GameObject.FindGameObjectsWithTag("ball").Length < 3)
         {
             var ball = Instantiate(ballPrefab) as GameObject;
-            ball.transform.position = (transform.position + new Vector3(0f, 3f, 0f));
+            ball.transform.position = (transform.position + new Vector3(0f, Random.Range(3f, 3.5f), 0f));
             ballRemaining--;
         }
     }
