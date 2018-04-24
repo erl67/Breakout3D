@@ -1,6 +1,6 @@
 # Breakout 3D 
 
-Inspired by the classic game of [Breakout on Atari 2600](https://www.youtube.com/watch?v=Up-a5x3coC0) and [Ricochet](https://www.youtube.com/watch?v=cBIedv-i8eo)
+Inspired by the classic [Breakout on Atari 2600](https://www.youtube.com/watch?v=Up-a5x3coC0) and [Ricochet](https://www.youtube.com/watch?v=cBIedv-i8eo)
 
 An [Eric Laslo](https://github.com/erl67) and [Yanbo Wang](https://github.com/YanboWang76) production
 
@@ -11,14 +11,19 @@ Position controller as desired, hit any key to begin
 
 Balls Available per level - [1, 2, 4, 3]
 
-Board will rotate based on score
-
-Hit (N)
+Board will rotate based on score, 50% score bonus when moving
 
 
 ## Controls:
 
-### Movement – Mouse to move, Click to launch ball
+### Mouse – 
+
+Move - Move paddle
+
+Left Click - Launch ball
+
+Right Click - Reset Camera
+
 
 ### Controller:
 
@@ -29,7 +34,7 @@ Tilt Up - Launch Ball (with 5s cooldown between launches)
 Tilt Down - Reset Camera / New Life
 
 Shift Key - Toggle between Accelerometer/Gyro mode
-   (paddle is larger in accelerometer mode, game starts in gyro mode, accelerometer is unpredictable)
+   (starts in gyro, accelerometer is unpredictable so you get a bigger paddle)
 
 
 ### Camera: 
@@ -50,21 +55,11 @@ Q – Quit
 
 Middle Mouse – self-destruct
 
-R – reset
-
 1,2,3,4,5 - select level
 
 0 - restart current level
 
-H - easy mode, ball never loses
-
-### Lighting: 
-
-L - toggle spotlight
-
-O - toggle overhead light
-
-I - toggle all lights
+R – reset on game over
 
 ***
 
