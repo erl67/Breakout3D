@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.IO.Ports;
-//using System.Threading;
 using System;
-//using System.Linq;
+using System.Threading;
 
 public class ArduinoController : MonoBehaviour
 {
@@ -25,19 +24,18 @@ public class ArduinoController : MonoBehaviour
     private Rigidbody ball;
     private Vector3 force;
 
-    //private int ax = 0 , ay = 0, gx = 0, gy = 0;
     private int moveX = 0, moveY = 0;
     private int turnX = 0, turnY = 0;
 
-    private int axThreshold = 30; //move
+    private int axThreshold = 40; //move
     private int ayThreshold = 50; //unused
-    private int gxThreshold = 20; //move
-    private int gyThreshold = 75; //launch ball 
-    private int gyThresholdNeg = -20; //resetCamera/life
+    private int gxThreshold = 35; //tilt move
+    private int gyThreshold = 70; //launch ball 
+    private int gyThresholdNeg = -30; //resetCamera/life
 
     public float moveAccScale = 200f;
-    public float moveGyroScale = 400f;
-    public float powerScale = 10f;
+    public float moveGyroScale = 500f;
+    //public float powerScale = 10f;
 
     void MovementData(string s)
     {
@@ -53,7 +51,9 @@ public class ArduinoController : MonoBehaviour
                 turnX = int.Parse(arduinoData[2]);
                 turnY = int.Parse(arduinoData[3]);
 
-                Debug.Log("accl (x:" + moveX + ",  y:" + moveY + ")\t gyro (x: " + turnX + ",  y:" + turnY + ")");
+                Debug.Log("gyro (x: " + turnX + ",  y:" + turnY + ")\tblocks:" + GameObject.FindGameObjectsWithTag("block").Length);
+
+                //Debug.Log("accl (x:" + moveX + ",  y:" + moveY + ")\t gyro (x: " + turnX + ",  y:" + turnY + ")");
             }
             else
             {
@@ -80,7 +80,7 @@ public class ArduinoController : MonoBehaviour
                 }
             }
 
-            if (turnY > gyThreshold && ballLoaded)   //resetCamera
+            if (turnY > gyThreshold && ballLoaded)   //launch ball
             {
                 ballLoaded = false;
                 paddle.LaunchBall();
@@ -89,19 +89,20 @@ public class ArduinoController : MonoBehaviour
             else if (turnY < gyThresholdNeg)
             {
                 view.ResetCamera();
-                if (Time.timeScale == 0)
-                {
-                    ballLoaded = true;
-                    Debug.Log("\tStarting new life");
-                    paddle.NewLife();
-                }
+            }
+
+            if (Time.timeScale == 0 && (turnY < (gyThresholdNeg / 1.5f)))
+            {
+                Debug.Log("\tStarting new life");
+                ballLoaded = true;
+                paddle.StopStartBox();
+                Time.timeScale = 1;
             }
         }
         //else Debug.Log("data-> " + data);            
-
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {
@@ -110,37 +111,54 @@ public class ArduinoController : MonoBehaviour
             Debug.Log("changing mode  gyroOnly = " + gyroOnly);
         }
 
-        if (!ballLoaded && (GameObject.FindGameObjectsWithTag("ball").Length == 0 || (timer < Time.time)))
+        if (GameObject.FindGameObjectsWithTag("ball").Length < 1 || timer < Time.time)
         {
             ballLoaded = true;
-            timer = Time.time + 4f;
+            timer = Time.time + 5f;
         }
     }
 
     void Start()
     {
+        StopAllCoroutines(); //stop ReadFromArduino
+        //StopCoroutine(AsynchronousReadFromArduino(null, null, 0f));
+        //yield return null WaitForSeconds(1);
         player = GameObject.Find("Player").gameObject.GetComponent<Rigidbody>();
         view = (CameraController)GameObject.Find("MainCamera").GetComponent("CameraController");
         paddle = (PlayerController)GameObject.Find("Player").GetComponent("PlayerController");
 
-        if (useController)
+        //if (!sp.IsOpen) Connect();
+        try
         {
-            string port = null;
-            var pLength = System.IO.Ports.SerialPort.GetPortNames();
-            if (pLength.Length == 0) useController = false;
+            Connect();
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.ToString() + " port reopening problem?");
+        }
+    }
 
-            if (useController)
-            {
-                foreach (string p in pLength)
-                {
-                    //Debug.Log("p: " + p);
-                    port = p;
-                }
-                sp = new SerialPort(port, 115200, Parity.None, 8, StopBits.One);
-                OpenConnection();
-                //WriteToArduino("PING");
-                StartCoroutine(AsynchronousReadFromArduino((string s) => MovementData(s), () => Debug.LogError("err-sensor"), 10000f));
-            }
+    private void Connect()
+    {
+        string port = null;
+        var pLength = System.IO.Ports.SerialPort.GetPortNames();
+        //if (pLength.Length == 0) useController = false;
+
+        foreach (string p in pLength)
+        {
+            //Debug.Log("p: " + p);
+            port = p;
+        }
+        sp = new SerialPort(port, 115200, Parity.None, 8, StopBits.One);
+        OpenConnection();
+
+        try
+        {
+            StartCoroutine(AsynchronousReadFromArduino((string s) => MovementData(s), () => Debug.LogError("err-sensor"), 10000f));
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.ToString() + " error starting coroutine");
         }
     }
 
@@ -189,14 +207,8 @@ public class ArduinoController : MonoBehaviour
         }
         else
         {
-            if (sp.IsOpen)
-            {
-                print("Port is already open");
-            }
-            else
-            {
-                print("Port == null");
-            }
+            if (sp.IsOpen) print("Port is already open");
+            else print("Port == null");
         }
     }
 
@@ -230,23 +242,15 @@ public class ArduinoController : MonoBehaviour
                 }
                 yield return null;
             }
-            else
-                yield return new WaitForSeconds(0.1f);
+            else yield return new WaitForSeconds(0.1f);
 
             nowTime = DateTime.Now;
             diff = nowTime - initialTime;
 
         } while (diff.Milliseconds < timeout);
 
-        if (fail != null)
-            fail();
+        if (fail != null) fail();
         yield return null;
-    }
-
-    public void WriteToArduino(string message)
-    {
-        sp.WriteLine(message);
-        sp.BaseStream.Flush();
     }
 
     void OnApplicationQuit()

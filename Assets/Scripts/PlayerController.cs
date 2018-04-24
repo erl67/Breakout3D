@@ -46,9 +46,9 @@ public class PlayerController : MonoBehaviour
                 break;
             default:
                 moveSpeed = Random.Range(2000f, 2500f);
-                playerScale = Random.Range(3f, 6f);
+                playerScale = Random.Range(3f, 4f);
                 ballRemaining = Random.Range(6, 9);
-                avScale = -120f;
+                avScale = -180f;
                 break;
         }
         rb = gameObject.GetComponent<Rigidbody>();
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
             if (timer < Time.realtimeSinceStartup) break;
             yield return null;
         }
-        Controller.SetCenter("");
+        Controller.SetCenter(" ");
 
         Time.timeScale = 1;
 
@@ -109,10 +109,10 @@ public class PlayerController : MonoBehaviour
 
     public void LaunchBall()
     {
-        if (GameObject.FindGameObjectsWithTag("ball").Length < 3 && Time.timeScale > 0)
+        if (GameObject.FindGameObjectsWithTag("ball").Length < 3 && Time.timeScale != 0)
         {
             var ball = Instantiate(ballPrefab) as GameObject;
-            ball.transform.position = (transform.position + new Vector3(0f, Random.Range(3f, 3.5f), 0f));
+            ball.transform.position = (transform.position + new Vector3(0f, Random.Range(3f, 5f), 0f));
             ballRemaining--;
         }
     }
@@ -149,7 +149,7 @@ public class PlayerController : MonoBehaviour
         if (SceneManager.GetActiveScene().buildIndex < 2)
         {
             Time.timeScale = 0;
-            Controller.SetCenter("\nYou dropped the ball.\nPress ( AnyKey ) to continue");
+            Controller.SetCenter("\nYou dropped the ball.\nPress ( Space ) to continue");
             NewLife();
         }
     }
@@ -158,5 +158,16 @@ public class PlayerController : MonoBehaviour
     {
         timer = Time.realtimeSinceStartup + 3f;
         StartCoroutine(StartBox());
+    }
+
+    public void StopStartBox()
+    {
+        Controller.SetCenter(" ");
+        Debug.Log("Stopping player coroutine");
+        StopCoroutine(StartBox());
+        if (SceneManager.GetActiveScene().buildIndex < 2)
+            player.transform.position = new Vector3(0f, 0f, 0f);
+        Time.timeScale = 1;
+
     }
 }

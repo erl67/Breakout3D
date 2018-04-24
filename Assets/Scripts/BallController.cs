@@ -117,12 +117,13 @@ public class BallController : MonoBehaviour
             {
                 if (Random.Range(0, 2) == 0)
                 {
-                    ball.transform.localScale *= .9f;
+                    ball.transform.localScale *= 1.1f;
                     rb.angularVelocity = new Vector3(Random.Range(-20f, 20f), Random.Range(-100f, 100f), 0f);
+                    rb.velocity *= Random.Range(.9f, 1.1f);
                 }
                 else
                 {
-                    ball.transform.localScale *= 1.1f;
+                    ball.transform.localScale *= .9f;
                 }
             }
 

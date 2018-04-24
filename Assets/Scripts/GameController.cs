@@ -98,6 +98,7 @@ public class GameController : MonoBehaviour
         if (GameController.instance.gameOver) PlayerDead();
 
         blocksRemaining = GameObject.FindGameObjectsWithTag("block").Length;
+        //Debug.Log(blocksRemaining);
 
         if (gameOver && Input.GetKeyDown(KeyCode.R))
         {
@@ -108,12 +109,12 @@ public class GameController : MonoBehaviour
             SceneManager.LoadScene(0);
         }
 
-        if (blocksRemaining < 5 && Input.anyKey)
+        if (blocksRemaining < 5 && Input.GetKeyDown(KeyCode.Space))
         {
-
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
-        else if (blocksRemaining < 1)
+
+        if (blocksRemaining <= 1)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }

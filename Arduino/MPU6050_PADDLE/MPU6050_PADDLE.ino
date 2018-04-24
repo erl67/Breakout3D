@@ -82,11 +82,11 @@ void setup() {
     //Serial.println("Testing device connections...");
     //Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
 
-    accelgyro.setXAccelOffset(-3544);
-    accelgyro.setYAccelOffset(832);
-    accelgyro.setZAccelOffset(1541);
-    accelgyro.setXGyroOffset(119);
-    accelgyro.setYGyroOffset(-51);
+    accelgyro.setXAccelOffset(-3562);
+    accelgyro.setYAccelOffset(818);
+    accelgyro.setZAccelOffset(1540);
+    accelgyro.setXGyroOffset(118);
+    accelgyro.setYGyroOffset(-50);
     accelgyro.setZGyroOffset(51);
 
     /* 
@@ -97,6 +97,8 @@ void setup() {
       Your offsets:  -3828 890 1576  117 -49 52
       Your offsets:  -3544 763 1518  119 -51 51
       Your offsets:  -3520 832 1541  119 -51 51  
+      Your offsets:  -3562 818 1540  118 -50 51
+
     
     Serial.println("Updating internal sensor offsets...");
     Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t"); // 562

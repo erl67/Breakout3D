@@ -37,6 +37,5 @@ public class blockController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
     }
 }
