@@ -45,7 +45,7 @@ public class blockController : MonoBehaviour
             if (other.gameObject.tag.Equals("ball") || other.gameObject.tag.Equals("block"))
             {
                 rb.constraints = RigidbodyConstraints.None;
-                rb.constraints = RigidbodyConstraints.FreezePositionX;
+                //rb.constraints = RigidbodyConstraints.FreezePositionX;
             }
         }
 
