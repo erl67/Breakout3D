@@ -63,7 +63,7 @@ Middle Mouse – self-destruct
 
 1,2,3,4,5 - select level
 
-0 - restart current level (useful if you let paddle escape)
+0 - restart current level (if you let paddle escape, and can't ram it back through the wall)
 
 R – reset on game over
 
