@@ -16,7 +16,7 @@ Board will rotate based on score, 50% score bonus when moving
 
 ## Controls:
 
-### Mouse – 
+### Mouse: 
 
 Move - Move paddle
 
