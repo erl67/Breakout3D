@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
                 avScale = -10f;
                 break;
             default:
-                moveSpeed = Random.Range(1500f, 2500f);
+                moveSpeed = Random.Range(2000f, 2500f);
                 playerScale = Random.Range(3f, 6f);
                 ballRemaining = Random.Range(6, 9);
                 avScale = -120f;
@@ -66,7 +66,9 @@ public class PlayerController : MonoBehaviour
         Controller.SetCenter("");
 
         Time.timeScale = 1;
-        player.transform.position = new Vector3(0f, 0f, 0f);
+
+        if (SceneManager.GetActiveScene().buildIndex < 2)
+            player.transform.position = new Vector3(0f, 0f, 0f);
     }
 
     void Update()
@@ -82,7 +84,12 @@ public class PlayerController : MonoBehaviour
 				transform.position = new Vector3 (30f, transform.position.y, 0f);
 			if (transform.position.x < -30f)
 				transform.position = new Vector3 (-30f, transform.position.y, 0f);
-		}
+		} else { //this is a quick fix for last levels, may not always work
+            if (transform.position.x > 30f)
+                transform.position = new Vector3(transform.position.x - .75f, transform.position.y, 0f);
+            if (transform.position.x < -30f)
+                transform.position = new Vector3(transform.position.x + .75f, transform.position.y, 0f);
+        }
     }
 
     void FixedUpdate()
@@ -133,16 +140,18 @@ public class PlayerController : MonoBehaviour
     {
         loseLife.Play();
 
-        if (SceneManager.GetActiveScene().buildIndex != 4)
+        //reset balls available for each level
+        ballRemaining = SceneManager.GetActiveScene().buildIndex + 1;
+        if (SceneManager.GetActiveScene().buildIndex == 2) ballRemaining = 4;
+        if (SceneManager.GetActiveScene().buildIndex > 2) ballRemaining = 6;
+
+        //only levels 1-3 will pause when ball is lost
+        if (SceneManager.GetActiveScene().buildIndex < 2)
         {
             Time.timeScale = 0;
             Controller.SetCenter("\nYou dropped the ball.\nPress ( AnyKey ) to continue");
             NewLife();
         }
-
-        ballRemaining = SceneManager.GetActiveScene().buildIndex + 1;
-        if (SceneManager.GetActiveScene().buildIndex == 2) ballRemaining = 4;
-        if (SceneManager.GetActiveScene().buildIndex > 2) ballRemaining = 6;
     }
 
     public void NewLife()
