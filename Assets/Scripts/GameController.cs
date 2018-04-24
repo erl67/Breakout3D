@@ -97,7 +97,7 @@ public class GameController : MonoBehaviour
     {
         if (GameController.instance.gameOver) PlayerDead();
 
-        blocksRemaining = GameObject.FindGameObjectsWithTag("block").Length; //on next level
+        blocksRemaining = GameObject.FindGameObjectsWithTag("block").Length;
 
         if (gameOver && Input.GetKeyDown(KeyCode.R))
         {
@@ -108,13 +108,18 @@ public class GameController : MonoBehaviour
             SceneManager.LoadScene(0);
         }
 
-        if (blocksRemaining < 10 && Input.anyKey)
+        if (blocksRemaining < 5 && Input.anyKey)
         {
+
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
         else if (blocksRemaining < 1)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+        else if (blocksRemaining < 6)
+        {
+            SetCenter("Press any key to advance");
         }
 
         if (Input.GetKeyDown(KeyCode.Q) || (Input.GetKeyDown(KeyCode.LeftControl) && (Input.GetKeyDown(KeyCode.C))))
