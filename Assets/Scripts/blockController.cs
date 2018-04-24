@@ -12,23 +12,7 @@ public class blockController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        switch (SceneManager.GetActiveScene().buildIndex)
-        {
-            case 0:
-                levelFlag = 0;
-                break;
-            case 1:
-                levelFlag = 1;
-                break;
-            case 2:
-                levelFlag = 2;
-                break;
-            default:
-                levelFlag = 3;
-                break;
-        }
-        // or
-        //levelFlag = SceneManager.GetActiveScene().buildIndex;
+        levelFlag = SceneManager.GetActiveScene().buildIndex;
     }
 
     private void OnCollisionEnter(Collision other)

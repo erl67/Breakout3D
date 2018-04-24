@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
 {
     public static GameController instance;
     public bool gameOver;
+    private CameraController view;
 
     public Text txtScore, txtLives, txtCenter, txtHelp;
 
@@ -30,7 +31,9 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        AudioListener.volume = .2f;
+        view = (CameraController)GameObject.Find("MainCamera").GetComponent("CameraController");
+
+        AudioListener.volume = .25f;
 
         timer = Time.time + 5f;
         StartCoroutine(StartBox());
@@ -55,6 +58,7 @@ public class GameController : MonoBehaviour
 
     public void AddScore(int delta)
     {
+        if (view.IsMoving()) delta = (int) (delta * 1.5);
         score += delta;
         txtScore.text = "Score: " + score;
     }
@@ -66,6 +70,7 @@ public class GameController : MonoBehaviour
 
     public void SetLives(int delta)
     {
+        if (delta < 0) view.ResetCamera();
         lives += delta;
         txtLives.text = "Lives: " + lives;
     }
@@ -102,7 +107,8 @@ public class GameController : MonoBehaviour
         if (blocksRemaining < 10 && Input.anyKey)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        } else if (blocksRemaining <1)
+        }
+        else if (blocksRemaining < 1)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
@@ -137,6 +143,10 @@ public class GameController : MonoBehaviour
         {
             SceneManager.LoadScene(3);
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            SceneManager.LoadScene(4);
+        }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -152,7 +162,6 @@ public class GameController : MonoBehaviour
     public void PlayerDead()
     {
         StopAllCoroutines();
-        //timer = Time.time + 7f;
         gameOver = true;
     }
 }

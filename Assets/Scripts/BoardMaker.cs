@@ -212,10 +212,11 @@ public class BoardMaker : MonoBehaviour
                 {
                     for (int x = xStart; x < cols / 2; x++)
                     {
-                        if (y % yMod == 0 && x % xMod == 0 && Random.Range(0,9) > 2)
-                            //if (Random.Range(0, 4) > 2)
+                        var place = Random.Range(0, 10) > SceneManager.GetActiveScene().buildIndex;
+                        if (y % yMod == 0 && x % xMod == 0 && place)
                         {
                             var block = Instantiate(blockPrefab) as GameObject;
+
                             block.transform.position = (transform.position + new Vector3(x, y, 0f));
                             block.transform.localScale = new Vector3(Random.Range(.5f, 1.75f), Random.Range(.5f, 1.75f), Random.Range(.75f, 2.5f));
                             block.GetComponent<Rigidbody>().mass = System.Math.Abs(rows + y); //points

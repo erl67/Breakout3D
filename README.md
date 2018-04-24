@@ -18,7 +18,7 @@ Hit (N)
 
 ## Controls:
 
-### Movement – Mouse to move
+### Movement – Mouse to move, Click to launch ball
 
 ### Controller:
 
@@ -40,7 +40,7 @@ WASD - Tilt
 
 Z/X - Rotate left/right toggle
 
-Spacebar - Reset Camera
+Spacebar / R_Mouse - Reset Camera
 
 ### Game Options: 
 
@@ -48,11 +48,11 @@ P – Pause
 
 Q – Quit
 
-Right Mouse – self-destruct
+Middle Mouse – self-destruct
 
 R – reset
 
-1,2,3,4 - select level
+1,2,3,4,5 - select level
 
 0 - restart current level
 
@@ -69,6 +69,9 @@ I - toggle all lights
 ***
 
 #### Arduino Resources: 
+
+To use sensor, use the calibration sketch first.
+Then copy the offsets and apply them to the paddle sketch.
 
 https://www.cdiweb.com/datasheets/invensense/MPU-6050_DataSheet_V3%204.pdf
 
