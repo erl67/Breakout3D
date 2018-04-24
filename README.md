@@ -13,6 +13,8 @@ Balls Available per level - [1, 2, 4, 6, 6]
 
 Board will rotate based on score, 50% score bonus when moving
 
+Score scales based on block height. You earn points on the first level by breaking blocks, changing to catching blocks.
+
 
 ## Controls:
 
