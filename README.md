@@ -7,9 +7,9 @@ An [Eric Laslo](https://github.com/erl67) and [Yanbo Wang](https://github.com/Ya
 
 ## Instructions:
 
-Position controller as desired, hit any key to begin
+Position controller as desired, hit any key to begin (or wait 5s)
 
-Balls Available per level - [1, 2, 4, 3]
+Balls Available per level - [1, 2, 4, 6, 6]
 
 Board will rotate based on score, 50% score bonus when moving
 
