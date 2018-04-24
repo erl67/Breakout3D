@@ -13,7 +13,9 @@ Balls Available per level - [1, 2, 4, 6, 6]
 
 Board will rotate based on score, 50% score bonus when moving
 
-Score scales based on block height. You earn points on the level 1 by breaking blocks, changing to catching blocks on level 2.
+Score scales based on block height.
+
+You earn points on the level 1 by breaking blocks, level 2+ you earn points by catching blocks.
 
 
 ## Controls:
@@ -61,9 +63,11 @@ Middle Mouse – self-destruct
 
 1,2,3,4,5 - select level
 
-0 - restart current level
+0 - restart current level (useful if you let paddle escape)
 
 R – reset on game over
+
+\`
 
 ***
 
