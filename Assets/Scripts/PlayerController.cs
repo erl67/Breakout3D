@@ -84,11 +84,12 @@ public class PlayerController : MonoBehaviour
 				transform.position = new Vector3 (30f, transform.position.y, 0f);
 			if (transform.position.x < -30f)
 				transform.position = new Vector3 (-30f, transform.position.y, 0f);
-		} else { //this is a quick fix for last levels, may not always work
+		} else { //this is a quick fix for last levels paddle escaping, may not always work
+            rb.velocity = Vector3.zero;
             if (transform.position.x > 30f)
-                transform.position = new Vector3(transform.position.x - .75f, transform.position.y, 0f);
+                transform.position = new Vector3(transform.position.x - 2f, transform.position.y, 0f);
             if (transform.position.x < -30f)
-                transform.position = new Vector3(transform.position.x + .75f, transform.position.y, 0f);
+                transform.position = new Vector3(transform.position.x + 2f, transform.position.y, 0f);
         }
     }
 
