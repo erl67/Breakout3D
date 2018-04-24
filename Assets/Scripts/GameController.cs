@@ -151,12 +151,6 @@ public class GameController : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-
-        if (Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.H))
-        {
-            GameObject.Find("Player").GetComponent<SphereCollider>().enabled = false;
-        }
-
     }
 
     public void PlayerDead()
