@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.IO.Ports;
-using System.Threading;
+//using System.Threading;
 using System;
-using System.Linq;
+//using System.Linq;
 
 public class ArduinoController : MonoBehaviour
 {
