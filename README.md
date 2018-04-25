@@ -17,6 +17,8 @@ Score scales based on block height.
 
 You earn points on the level 1 by breaking blocks, level 2+ you earn points by catching blocks.
 
+If paddle escapes you must force it back through the wall, or self-destruct.
+
 
 ## Controls:
 
@@ -63,7 +65,7 @@ Middle Mouse – self-destruct
 
 1,2,3,4,5 - select level
 
-0 - restart current level (if you let paddle escape, and can't ram it back through the wall)
+0 - restart current level
 
 R – reset on game over
 
