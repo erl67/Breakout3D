@@ -70,15 +70,9 @@ void setup() {
         Fastwire::setup(400, true);
     #endif
 
-    // initialize serial communication
-    // (38400 chosen because it works as well at 8MHz as it does at 16MHz, but
-    // it's really up to you depending on your project)
     Serial.begin(115200);
-
-    // initialize device
     //Serial.println("Initializing I2C devices...");
     accelgyro.initialize();
-    // verify connection
     //Serial.println("Testing device connections...");
     //Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
 
@@ -99,23 +93,6 @@ void setup() {
       Your offsets:  -3520 832 1541  119 -51 51  
       Your offsets:  -3562 818 1540  118 -50 51
 
-    
-    Serial.println("Updating internal sensor offsets...");
-    Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t"); // 562
-    Serial.print(accelgyro.getYAccelOffset()); Serial.print("\t"); // 865
-    Serial.print(accelgyro.getZAccelOffset()); Serial.print("\t"); // 1624
-    Serial.print(accelgyro.getXGyroOffset()); Serial.print("\t"); // 2200
-    Serial.print(accelgyro.getYGyroOffset()); Serial.print("\t"); // 76
-    Serial.println(accelgyro.getZGyroOffset());                    // -500
-
-    Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t");
-    Serial.print(accelgyro.getYAccelOffset()); Serial.print("\t");
-    Serial.print(accelgyro.getZAccelOffset()); Serial.print("\t");
-    Serial.print(accelgyro.getXGyroOffset()); Serial.print("\t");
-    Serial.print(accelgyro.getYGyroOffset()); Serial.print("\t");
-    Serial.print(accelgyro.getZGyroOffset()); Serial.print("\t");
-    Serial.print("\n");
-
 */
     // configure Arduino LED pin for output
     pinMode(LED_PIN, OUTPUT);
@@ -131,7 +108,6 @@ void loop() {
 
     #ifdef MAPPED_XY 
         #ifdef RAW_XY
-          //delay(100);
           Serial.print("\nraw:\t");
           Serial.print(-1 * ay); Serial.print("\t");
           Serial.print(-1 * ax); Serial.print("\t");
@@ -139,6 +115,7 @@ void loop() {
           Serial.println(gy);
         #endif
         
+        //map readings to -100 to +100 for easier use in unity
         Serial.print("a/g:\t");
         Serial.print(-1 * map(ay,-32000,32000,-100,100)); Serial.print("\t");
         Serial.print(- 1* map(ax,-32000,32000,-100,100)); Serial.print("\t");
@@ -174,4 +151,3 @@ void loop() {
     blinkState = !blinkState;
     digitalWrite(LED_PIN, blinkState);
 }
-
